@@ -1,11 +1,6 @@
 from pyffi.formats.nif import NifFormat
-import Math
-import Printer
 
-nodes = [];
-uvs = [];
-normals = [];
-triangles = [];
+import sys, getopt
 
 def findNodeInTree(treeAble, clazz):
     for block in treeAble.tree():
@@ -35,91 +30,73 @@ def isBodyShape( node ):
     else:
         return False;       
             
-def getNodeUvNormalsAndTriangles( shape ):
+def getMesh( shape ):
     data = findNodeInTree(shape, NifFormat.NiTriShapeData)
     
     iNodes = data.vertices
     iUvs =  data.uv_sets[0]
-    iNormals = data.normals
     iTriangles = data.triangles
     
-    return (iNodes, iUvs, iNormals, iTriangles);
+    return (iNodes, iTriangles, iUvs);
             
-def loadBody():
-    global nodes
-    global uvs
-    global normals
-    global triangles
-    
-    stream = open('C:\\Users\\thoma\\Downloads\\femalebody_1.nif', 'rb')
+def load( file, skipBody ): 
+    stream = open( file, 'rb')
     data = NifFormat.Data()
     data.read(stream)
-    shape = getNiTriShapes(data)[0]
-    if not isBodyShape(shape): raise ArithmeticError("Not a Body")
+    shapes = getNiTriShapes(data)
     
-    data = getNodeUvNormalsAndTriangles(shape)
+    completeFile = []
     
-    nodes = data[0]
-    uvs =  data[1]
-    normals = data[2]
-    triangles = data[3]
+    for shape in shapes:
+        if not (skipBody and isBodyShape(shape)):
+            mesh = getMesh(shape)
     
-    amountToMatch = Math.hasSameCoo(nodes)
-    print('Equal coordinates: ' + str(amountToMatch[0]))
-    toPrint = []
-    for t in amountToMatch[1]:
-        print(str(uvs[t[0]]) + "::" + str(uvs[t[1]]))
-        toPrint.extend([uvs[t[0]],uvs[t[1]]])
-    
-    Printer.printUvsPixel(toPrint,'C:\\Users\\thoma\\Downloads\\testDouble.png',(2048,2048))
-    
-    print(len(nodes))
-    print(len(uvs))
-    print(len(normals))
-    print(len(triangles))
-    
+            name = shape.name
+            nodes = mesh[0]
+            triangles = mesh[1]
+            uvs =  mesh[2]
+            
+            completeFile.append((name, nodes, triangles, uvs))
+            
     stream.close()
-    return;
+    return completeFile;
 
-def getClosestNode( node ):
-    closeI = -1
-    closest = None
-    dist = float("inf")
-    for i, other in enumerate(nodes):
-        if node != other:
-            oDist = Math.dist(node, other)
-            if(oDist < dist):
-                closeI = i
-                closest = other
-                dist = oDist
-    return (closeI, closest);
+def format( niShapeData ):
+    form = niShapeData[0].decode('ascii') + '::'
+    nodes = str([n.as_list() for n in niShapeData[1]]) + '::'
+    triangles = str([[tri.v_1, tri.v_2, tri.v_3] for tri in niShapeData[2]]) + '::'
+    uv = str([[uv.as_list() for uv in niShapeData[3]]])
+    return form #+ nodes + triangles + uv;
 
-def getUvs(iNodeList):
-    return [uvs[iNode[0]] for iNode in iNodeList]
+argv = sys.argv
+fileName = None
+excludeBase = False
 
-loadBody();
+try:
+  opts, args = getopt.getopt(argv,"hi:e",["ifile=","exBase"])
+except getopt.GetoptError:
+  print('Skyrim.py -i <inputfile> -e <exclude base>')
+  sys.exit(2)
+for opt, arg in opts:
+  if opt == '-h':
+     print('Skyrim.py -i <inputfile> -e <exclude base>')
+     sys.exit()
+  elif opt in ("-i", "--ifile"):
+     fileName = arg
+  elif opt in ("-e", "--exBase"):
+     excludeBase = True
+     
+completeFile = []
 
-Printer.printUvs(uvs, triangles,'C:\\Users\\thoma\\Downloads\\test.png',(2048,2048))
+if(fileName != None):
+    completeFile = load(fileName, excludeBase)
 
-stream = open('C:\\Users\\thoma\\Downloads\\test2.nif', 'rb')
+first = True
+out = ''
+for data in completeFile:
+    if not first:
+        out += '::!::'
+    first = False
+    out += format(data)
 
-data = NifFormat.Data()
-
-data.read(stream)
-shapes = getNiTriShapes(data)
-shapeNameToUv = dict()
-for shape in shapes:
-    name = shape.name.decode("ascii")
-    print("Working on: " + name)
-    if(not isBodyShape(shape)):
-        nunt = getNodeUvNormalsAndTriangles(shape)
-        nodes =  nunt[0]
-        others = []
-        for node in nodes:
-            others.append(getClosestNode(node))
-
-        shapeNameToUv[name] = getUvs(others)
-        Printer.printUvs(shapeNameToUv[name], nunt[3],'C:\\Users\\thoma\\Downloads\\' + name + '.png',(2048,2048))
-        Printer.printUvs(nunt[1], nunt[3],'C:\\Users\\thoma\\Downloads\\' + name + '_orig.png',(2048,2048))
-        
-stream.close()
+print(out)
