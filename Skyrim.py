@@ -1,6 +1,6 @@
 from pyffi.formats.nif import NifFormat
 
-import sys, getopt
+import sys, argparse
 
 def findNodeInTree(treeAble, clazz):
     for block in treeAble.tree():
@@ -66,26 +66,23 @@ def format( niShapeData ):
     nodes = str([n.as_list() for n in niShapeData[1]]) + '::'
     triangles = str([[tri.v_1, tri.v_2, tri.v_3] for tri in niShapeData[2]]) + '::'
     uv = str([[uv.as_list() for uv in niShapeData[3]]])
-    return form #+ nodes + triangles + uv;
+    return form + nodes + triangles + uv;
 
-argv = sys.argv
 fileName = None
 excludeBase = False
 
-try:
-  opts, args = getopt.getopt(argv,"hi:e",["ifile=","exBase"])
-except getopt.GetoptError:
-  print('Skyrim.py -i <inputfile> -e <exclude base>')
-  sys.exit(2)
-for opt, arg in opts:
-  if opt == '-h':
-     print('Skyrim.py -i <inputfile> -e <exclude base>')
-     sys.exit()
-  elif opt in ("-i", "--ifile"):
-     fileName = arg
-  elif opt in ("-e", "--exBase"):
-     excludeBase = True
-     
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--iFile", help="Input File")
+parser.add_argument("-e", "--exBase", help="exclude the base", action="store_true")
+args = parser.parse_args()
+
+if args.iFile:
+    fileName = args.iFile
+else:
+    fileName = None
+
+excludeBase = args.exBase
+
 completeFile = []
 
 if(fileName != None):
