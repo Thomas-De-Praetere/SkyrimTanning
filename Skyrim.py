@@ -1,4 +1,4 @@
-from pyffi.formats.nif import NifFormat
+from Lib.pyffi.formats.nif import NifFormat
 
 import sys, argparse
 
