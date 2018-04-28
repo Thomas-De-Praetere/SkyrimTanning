@@ -40,4 +40,9 @@ public class ParseIterator {
 	boolean isDone() {
 		return i >= toParse.length();
 	}
+
+	@Override
+	public String toString() {
+		return getContent();
+	}
 }

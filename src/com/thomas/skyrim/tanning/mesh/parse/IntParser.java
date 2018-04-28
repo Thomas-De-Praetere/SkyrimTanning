@@ -7,17 +7,17 @@ import java.util.Optional;
  */
 public class IntParser implements Parser<Integer> {
 
-	@Override
-	public Optional<Integer> parse(ParseIterator iterator) {
-		String content = iterator.getContent();
-		String s = content.split(",", 1)[0];
-		try {
-			int v = Integer.parseInt(s);
-			return Optional.of(v);
-		} catch (Exception e) {
-			return Optional.empty();
-		} finally {
-			iterator.move(s.length());
-		}
-	}
+    @Override
+    public Optional<Integer> parse(ParseIterator iterator) {
+        String content = iterator.getContent();
+        String s = content.split("[, \\]]", 2)[0];
+        try {
+            int v = Integer.parseInt(s);
+            return Optional.of(v);
+        } catch (Exception e) {
+            return Optional.empty();
+        } finally {
+            iterator.move(s.length());
+        }
+    }
 }
