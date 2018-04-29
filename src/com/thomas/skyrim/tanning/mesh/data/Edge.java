@@ -1,31 +1,25 @@
 package com.thomas.skyrim.tanning.mesh.data;
 
 /**
+ * Edges need triangles to know from which triangle to which we go when projecting.
+ * <p>
  * This class was created by thoma on 24-Apr-18.
  */
 public class Edge {
 
-	private Node[] nodes;
-	private Triangle[] triangles;
+    private final Node[] nodes;
+    private final Triangle[] triangles;
 
-	Edge() {
-		nodes = new Node[2];
-		triangles = new Triangle[2];
-	}
+    public Edge(Node[] nodes, Triangle[] triangles) {
+        this.nodes = nodes;
+        this.triangles = triangles;
+    }
 
-	public Node[] getNodes() {
-		return nodes;
-	}
+    public Node[] getNodes() {
+        return nodes;
+    }
 
-	public Triangle[] getTriangles() {
-		return triangles;
-	}
-
-	void setNodes(Node[] nodes) {
-		this.nodes = nodes;
-	}
-
-	void setTriangles(Triangle[] triangles) {
-		this.triangles = triangles;
-	}
+    public Triangle[] getTriangles() {
+        return triangles;
+    }
 }

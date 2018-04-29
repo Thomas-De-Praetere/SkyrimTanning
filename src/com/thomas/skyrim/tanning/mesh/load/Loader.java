@@ -1,13 +1,13 @@
 package com.thomas.skyrim.tanning.mesh.load;
 
-import com.thomas.skyrim.tanning.mesh.data.Mesh;
-import com.thomas.skyrim.tanning.mesh.data.Triple;
-import com.thomas.skyrim.tanning.mesh.data.Tuple;
+import com.google.common.base.Preconditions;
+import com.thomas.skyrim.tanning.mesh.data.*;
 import com.thomas.skyrim.tanning.mesh.parse.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,11 +58,49 @@ public class Loader {
             }
             List<Mesh> meshes = new ArrayList<>();
             for (Info info : infoList) {
-
+                List<Node> nodes = createNodes(info);
+                List<Triangle> triangles = createTriangles(info, nodes);
+                List<Edge> edges = createEdges(info, nodes, triangles);
             }
             return meshes;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<Edge> createEdges(Info info, List<Node> nodes, List<Triangle> triangles) {
+        List<Edge> edges = new ArrayList<>();
+        for (Triangle triangle : triangles) {
+            Edge[] triEdges = new Edge[]{new Edge()}
+        }
+    }
+
+    private List<Triangle> createTriangles(Info info, List<Node> nodes) {
+        List<Triangle> triangles = new ArrayList<>();
+        for (Triple<Integer> triple : info.triangles) {
+            Node node1 = nodes.get(triple.getX());
+            Node node2 = nodes.get(triple.getY());
+            Node node3 = nodes.get(triple.getZ());
+
+            Node[] triNodes = {node1, node2, node3};
+
+            Triangle triangle = new Triangle(triNodes);
+            triangles.add(triangle);
+
+            Arrays.stream(triNodes).forEach(n -> n.getTriangles().add(triangle));
+        }
+        return triangles;
+    }
+
+
+    private List<Node> createNodes(Info info) {
+        Preconditions.checkArgument(info.nodes.size() == info.uvs.size());
+        List<Node> nodes = new ArrayList<>();
+        for (int i = 0; i < info.nodes.size(); i++) {
+            Triple<Double> coordinate = info.nodes.get(i);
+            Tuple uv = info.uvs.get(i);
+            nodes.add(new Node(new Coordinate(coordinate.getX(), coordinate.getY(), coordinate.getZ()), uv));
+        }
+        return nodes;
     }
 }

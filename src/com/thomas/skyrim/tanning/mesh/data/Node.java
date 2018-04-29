@@ -1,5 +1,6 @@
 package com.thomas.skyrim.tanning.mesh.data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -7,12 +8,32 @@ import java.util.Set;
  */
 public class Node {
 
-	private Triple coordinate;
-	private Tuple uv;
+    private final Coordinate coordinate;
+    private final Tuple uv;
 
-	Set<Triangle> triangles;
-	Set<Edge> edges;
+    private final Set<Triangle> triangles;
+    private final Set<Edge> edges;
 
-	Node() {
-	}
+    public Node(Coordinate coordinate, Tuple uv) {
+        this.coordinate = coordinate;
+        this.uv = uv;
+        triangles = new HashSet<>();
+        edges = new HashSet<>();
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    public Tuple getUv() {
+        return uv;
+    }
+
+    public Set<Triangle> getTriangles() {
+        return triangles;
+    }
+
+    public Set<Edge> getEdges() {
+        return edges;
+    }
 }

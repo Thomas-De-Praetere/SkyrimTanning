@@ -5,11 +5,22 @@ package com.thomas.skyrim.tanning.mesh.data;
  */
 public class Triangle {
 
-	private Node[] nodes;
-	private Edge[] edges;
+    private final Node[] nodes;
+    private Edge[] edges;
 
-	Triangle() {
-		nodes = new Node[3];
-		edges = new Edge[3];
-	}
+    public Triangle(Node[] nodes) {
+        this.nodes = nodes;
+    }
+
+    public Node[] getNodes() {
+        return nodes;
+    }
+
+    public Edge[] getEdges() {
+        return edges;
+    }
+
+    public void setEdges(Edge[] edges) {
+        this.edges = edges;
+    }
 }
