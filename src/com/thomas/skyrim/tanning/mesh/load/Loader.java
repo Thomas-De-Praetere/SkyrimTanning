@@ -3,13 +3,11 @@ package com.thomas.skyrim.tanning.mesh.load;
 import com.google.common.base.Preconditions;
 import com.thomas.skyrim.tanning.mesh.data.*;
 import com.thomas.skyrim.tanning.mesh.parse.*;
+import com.thomas.skyrim.tanning.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -70,8 +68,9 @@ public class Loader {
 
     private List<Edge> createEdges(Info info, List<Node> nodes, List<Triangle> triangles) {
         List<Edge> edges = new ArrayList<>();
+        Map<Pair<Node>, Edge> nodeToEdge = new HashMap<>();
         for (Triangle triangle : triangles) {
-            Edge[] triEdges = new Edge[]{new Edge()}
+
         }
     }
 
