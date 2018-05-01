@@ -34,8 +34,8 @@ public class Loader {
 
         @Override
         public Optional<Info> parse(ParseIterator iterator) {
-            String name = iterator.getContent().split("::", 2)[0];
-            iterator.move(name.length() + 2);
+            String name = iterator.moveUntil(c -> c == ':');
+            iterator.move(2);
             List<Triple<Double>> nodes = new ListParser<>(TripleParser.getDoubleParser()).parse(iterator).orElse(new ArrayList<>());
             iterator.move(2);
             List<Triple<Integer>> triangles = new ListParser<>(TripleParser.getIntParser()).parse(iterator).orElse(new ArrayList<>());
@@ -47,9 +47,14 @@ public class Loader {
 
     public List<Mesh> load(String location, boolean isBody) {
         try {
+            System.out.println("Running script.");
+
             Process p = Runtime.getRuntime().exec("python Skyrim.py -i " + location + ((isBody) ? "" : " -e"));
             String result = new BufferedReader(new InputStreamReader(p.getInputStream())).lines().collect(Collectors.joining("\n"));
             String[] split = result.split("::!::");
+
+            System.out.println(String.format("Received %d meshes.", split.length));
+
             List<Info> infoList = new ArrayList<>();
             for (String s : split) {
                 new InfoParser().parse(new ParseIterator(s)).ifPresent(infoList::add);
@@ -58,7 +63,8 @@ public class Loader {
             for (Info info : infoList) {
                 List<Node> nodes = createNodes(info);
                 List<Triangle> triangles = createTriangles(info, nodes);
-                List<Edge> edges = createEdges(info, nodes, triangles);
+                List<Edge> edges = createEdges(triangles);
+                meshes.add(new Mesh(info.name, triangles, nodes, edges));
             }
             return meshes;
         } catch (Exception e) {
@@ -66,12 +72,38 @@ public class Loader {
         }
     }
 
-    private List<Edge> createEdges(Info info, List<Node> nodes, List<Triangle> triangles) {
+    private List<Edge> createEdges(List<Triangle> triangles) {
         List<Edge> edges = new ArrayList<>();
         Map<Pair<Node>, Edge> nodeToEdge = new HashMap<>();
         for (Triangle triangle : triangles) {
+            List<Node> triNodes = triangle.getNodes();
 
+            List<Edge> triEdges = new ArrayList<>(3);
+
+            List<int[]> list = Arrays.asList(new int[]{0, 1}, new int[]{1, 2}, new int[]{2, 0});
+            for (int[] ints : list) {
+                Pair<Node> pair = Pair.of(triNodes.get(ints[0]), triNodes.get(ints[1]));
+                Edge edge = getEdge(pair, edges, nodeToEdge);
+
+                triEdges.add(edge);
+            }
+            for (Edge edge : triEdges) {
+                edge.getTriangles().add(triangle);
+                for (Node node : edge.getNodes()) {
+                    node.getEdges().add(edge);
+                }
+            }
+            triangle.getEdges().addAll(triEdges);
         }
+        return edges;
+    }
+
+    private Edge getEdge(Pair<Node> pair, List<Edge> edges, Map<Pair<Node>, Edge> nodeToEdge) {
+        if (nodeToEdge.containsKey(pair)) return nodeToEdge.get(pair);
+        Edge edge = new Edge(pair.asList());
+        edges.add(edge);
+        nodeToEdge.put(pair, edge);
+        return edge;
     }
 
     private List<Triangle> createTriangles(Info info, List<Node> nodes) {
@@ -81,12 +113,12 @@ public class Loader {
             Node node2 = nodes.get(triple.getY());
             Node node3 = nodes.get(triple.getZ());
 
-            Node[] triNodes = {node1, node2, node3};
+            List<Node> triNodes = Arrays.asList(node1, node2, node3);
 
             Triangle triangle = new Triangle(triNodes);
             triangles.add(triangle);
 
-            Arrays.stream(triNodes).forEach(n -> n.getTriangles().add(triangle));
+            triNodes.forEach(n -> n.getTriangles().add(triangle));
         }
         return triangles;
     }

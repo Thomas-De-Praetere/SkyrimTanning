@@ -1,5 +1,7 @@
 package com.thomas.skyrim.tanning.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -9,8 +11,7 @@ public class Pair<U> {
     private final U u;
     private final U v;
 
-    public Pair(U u, U v) {
-
+    Pair(U u, U v) {
         this.u = u;
         this.v = v;
     }
@@ -21,6 +22,10 @@ public class Pair<U> {
 
     public U getV() {
         return v;
+    }
+
+    public List<U> asList() {
+        return Arrays.asList(u, v);
     }
 
     @Override
@@ -35,5 +40,9 @@ public class Pair<U> {
     @Override
     public int hashCode() {
         return Objects.hash(u, v) + Objects.hash(v, u);
+    }
+
+    public static <U> Pair<U> of(U u, U v) {
+        return new Pair<>(u, v);
     }
 }

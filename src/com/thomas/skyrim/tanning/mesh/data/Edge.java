@@ -1,5 +1,9 @@
 package com.thomas.skyrim.tanning.mesh.data;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Edges need triangles to know from which triangle to which we go when projecting.
  * <p>
@@ -7,19 +11,19 @@ package com.thomas.skyrim.tanning.mesh.data;
  */
 public class Edge {
 
-    private final Node[] nodes;
-    private final Triangle[] triangles;
+    private final List<Node> nodes;
+    private final Set<Triangle> triangles;
 
-    public Edge(Node[] nodes, Triangle[] triangles) {
+    public Edge(List<Node> nodes) {
         this.nodes = nodes;
-        this.triangles = triangles;
+        this.triangles = new HashSet<>();
     }
 
-    public Node[] getNodes() {
+    public List<Node> getNodes() {
         return nodes;
     }
 
-    public Triangle[] getTriangles() {
+    public Set<Triangle> getTriangles() {
         return triangles;
     }
 }

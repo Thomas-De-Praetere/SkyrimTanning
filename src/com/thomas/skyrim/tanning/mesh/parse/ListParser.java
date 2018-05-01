@@ -24,7 +24,7 @@ public class ListParser<T> implements Parser<List<T>> {
 		while (iterator.getCurrent() != ']') {
 			parser.parse(iterator).ifPresent(list::add);
 			Predicate<Character> pred = (n-> n ==','|| n ==' ');
-			iterator.moveUntill(pred.negate());
+			iterator.moveUntil(pred.negate());
 		}
 		iterator.move();
 		return Optional.of(list);

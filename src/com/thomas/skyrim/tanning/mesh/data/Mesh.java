@@ -34,4 +34,14 @@ public class Mesh {
     public List<Edge> getEdges() {
         return edges;
     }
+
+    @Override
+    public String toString() {
+        return "Mesh{" +
+                "name='" + name + '\'' +
+                ", triangles:" + triangles.size() +
+                ", nodes:" + nodes.size() +
+                ", edges:" + edges.size() +
+                '}';
+    }
 }

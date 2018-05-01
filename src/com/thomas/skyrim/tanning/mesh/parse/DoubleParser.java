@@ -9,15 +9,12 @@ public class DoubleParser implements Parser<Double> {
 
     @Override
     public Optional<Double> parse(ParseIterator iterator) {
-        String content = iterator.getContent();
-        String s = content.split("[, \\]]", 2)[0];
+        String content = iterator.moveUntil(c -> c == ',' || c == ']');
         try {
-            double v = Double.parseDouble(s);
+            double v = Double.parseDouble(content);
             return Optional.of(v);
         } catch (Exception e) {
             return Optional.empty();
-        } finally {
-            iterator.move(s.length());
         }
     }
 }

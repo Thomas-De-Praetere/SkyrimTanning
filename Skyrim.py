@@ -65,7 +65,7 @@ def format( niShapeData ):
     form = niShapeData[0].decode('ascii') + '::'
     nodes = str([n.as_list() for n in niShapeData[1]]) + '::'
     triangles = str([[tri.v_1, tri.v_2, tri.v_3] for tri in niShapeData[2]]) + '::'
-    uv = str([[uv.as_list() for uv in niShapeData[3]]])
+    uv = str([uv.as_list() for uv in niShapeData[3]])
     return form + nodes + triangles + uv;
 
 fileName = None

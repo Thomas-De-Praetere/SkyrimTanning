@@ -7,42 +7,47 @@ import java.util.function.Predicate;
  */
 public class ParseIterator {
 
-	private String toParse;
-	private int i;
+    private String toParse;
+    private int i;
 
-	public ParseIterator(String toParse) {
-		this.toParse = toParse;
-		i = 0;
-	}
+    public ParseIterator(String toParse) {
+        this.toParse = toParse;
+        i = 0;
+    }
 
-	public String getContent() {
-		return toParse.substring(i);
-	}
 
-	public char getCurrent() {
-		return toParse.charAt(i);
-	}
+    public char getCurrent() {
+        return toParse.charAt(i);
+    }
 
-	public void move(int amount) {
-		i += amount;
-	}
+    public String move(int amount) {
+        StringBuilder builder = new StringBuilder();
+        for (int j = 0; j < amount; j++) {
+            builder.append(getCurrent());
+            i++;
+        }
+        return builder.toString();
+    }
 
-	public void moveUntill(Predicate<Character> border) {
-		while (!border.test(getCurrent())) {
-			move();
-		}
-	}
+    public String moveUntil(Predicate<Character> border) {
+        StringBuilder builder = new StringBuilder();
+        while (!border.test(getCurrent())) {
+            builder.append(getCurrent());
+            i++;
+        }
+        return builder.toString();
+    }
 
-	public void move() {
-		move(1);
-	}
+    public String move() {
+        return move(1);
+    }
 
-	boolean isDone() {
-		return i >= toParse.length();
-	}
+    boolean isDone() {
+        return i >= toParse.length();
+    }
 
-	@Override
-	public String toString() {
-		return getContent();
-	}
+    @Override
+    public String toString() {
+        return toParse.substring(i);
+    }
 }
