@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * We use P1, P2 and P3 as the nodes of the Triangle. Then the triangle is:
+ * T(s,t) = P1*(1-s-t) + P2*s + P3*t for (s,t) in ([0, 1],[0, 1])
+ *
  * This class was created by thoma on 24-Apr-18.
  */
 public class Triangle {

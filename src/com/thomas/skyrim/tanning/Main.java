@@ -16,9 +16,6 @@ public class Main {
         Loader loader = new Loader();
         List<Mesh> load = loader.load(location, isBody);
 
-        System.out.println(load.toString());
-
-        load.forEach(Main::checkMesh);
     }
 
     public static void checkMesh(Mesh mesh) {
