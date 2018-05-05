@@ -17,8 +17,34 @@ public class GeometricLine {
         );
     }
 
-    GeometricLine(Coordinate p1, Coordinate p2) {
+    protected GeometricLine(Coordinate p1, Coordinate p2) {
         this.p1 = p1;
         this.p2 = p2;
+    }
+
+    public Coordinate getP1() {
+        return p1;
+    }
+
+    public Coordinate getP2() {
+        return p2;
+    }
+
+    public static class LineCoordinate {
+        private final double lambda;
+        private final GeometricLine line;
+
+        public LineCoordinate(double lambda, GeometricLine line) {
+            this.lambda = lambda;
+            this.line = line;
+        }
+
+        public double getLambda() {
+            return lambda;
+        }
+
+        public GeometricLine getLine() {
+            return line;
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.thomas.skyrim.tanning.mesh.load;
 import com.google.common.base.Preconditions;
 import com.thomas.skyrim.tanning.mesh.data.*;
 import com.thomas.skyrim.tanning.mesh.parse.*;
-import com.thomas.skyrim.tanning.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -74,7 +73,7 @@ public class Loader {
 
     private List<Edge> createEdges(List<Triangle> triangles) {
         List<Edge> edges = new ArrayList<>();
-        Map<Pair<Node>, Edge> nodeToEdge = new HashMap<>();
+        Map<SinglePair<Node>, Edge> nodeToEdge = new HashMap<>();
         for (Triangle triangle : triangles) {
             List<Node> triNodes = triangle.getNodes();
 
@@ -82,7 +81,7 @@ public class Loader {
 
             List<int[]> list = Arrays.asList(new int[]{0, 1}, new int[]{1, 2}, new int[]{2, 0});
             for (int[] ints : list) {
-                Pair<Node> pair = Pair.of(triNodes.get(ints[0]), triNodes.get(ints[1]));
+                SinglePair<Node> pair = SinglePair.singleOf(triNodes.get(ints[0]), triNodes.get(ints[1]));
                 Edge edge = getEdge(pair, edges, nodeToEdge);
 
                 triEdges.add(edge);
@@ -98,7 +97,7 @@ public class Loader {
         return edges;
     }
 
-    private Edge getEdge(Pair<Node> pair, List<Edge> edges, Map<Pair<Node>, Edge> nodeToEdge) {
+    private Edge getEdge(SinglePair<Node> pair, List<Edge> edges, Map<SinglePair<Node>, Edge> nodeToEdge) {
         if (nodeToEdge.containsKey(pair)) return nodeToEdge.get(pair);
         Edge edge = new Edge(pair.asList());
         edges.add(edge);
@@ -109,9 +108,9 @@ public class Loader {
     private List<Triangle> createTriangles(Info info, List<Node> nodes) {
         List<Triangle> triangles = new ArrayList<>();
         for (Triple<Integer> triple : info.triangles) {
-            Node node1 = nodes.get(triple.getX());
-            Node node2 = nodes.get(triple.getY());
-            Node node3 = nodes.get(triple.getZ());
+            Node node1 = nodes.get(triple.x());
+            Node node2 = nodes.get(triple.y());
+            Node node3 = nodes.get(triple.z());
 
             List<Node> triNodes = Arrays.asList(node1, node2, node3);
 
@@ -130,7 +129,7 @@ public class Loader {
         for (int i = 0; i < info.nodes.size(); i++) {
             Triple<Double> coordinate = info.nodes.get(i);
             Tuple uv = info.uvs.get(i);
-            nodes.add(new Node(new Coordinate(coordinate.getX(), coordinate.getY(), coordinate.getZ()), uv));
+            nodes.add(new Node(new Coordinate(coordinate.x(), coordinate.y(), coordinate.z()), uv));
         }
         return nodes;
     }

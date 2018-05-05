@@ -5,25 +5,26 @@ package com.thomas.skyrim.tanning.mesh.data;
  */
 public class Triple<T> {
 
-	private T x;
-	private T y;
-	private T z;
+    protected final T x;
+    protected final T y;
+    protected final T z;
 
-	public Triple(T x, T y, T z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
+    public Triple(T x, T y, T z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
 
-	public T getX() {
-		return x;
-	}
+    public T x() {
+        return x;
+    }
 
-	public T getY() {
-		return y;
-	}
+    public T y() {
+        return y;
+    }
 
-	public T getZ() {
-		return z;
-	}
+    public T z() {
+        return z;
+    }
+
 }
