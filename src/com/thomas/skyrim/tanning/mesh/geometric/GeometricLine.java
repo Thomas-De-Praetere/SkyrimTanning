@@ -17,7 +17,7 @@ public class GeometricLine {
         );
     }
 
-    protected GeometricLine(Coordinate p1, Coordinate p2) {
+    GeometricLine(Coordinate p1, Coordinate p2) {
         this.p1 = p1;
         this.p2 = p2;
     }
@@ -45,6 +45,10 @@ public class GeometricLine {
 
         public GeometricLine getLine() {
             return line;
+        }
+
+        public Coordinate toCoordinate() {
+            return line.p1.times(1 - lambda).add(line.p2.times(lambda));
         }
     }
 }

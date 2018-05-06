@@ -12,7 +12,7 @@ public class GeometricTriangle {
     private final Coordinate p2;
     private final Coordinate p3;
 
-    protected GeometricTriangle(Coordinate p1, Coordinate p2, Coordinate p3) {
+    GeometricTriangle(Coordinate p1, Coordinate p2, Coordinate p3) {
         this.p1 = p1;
         this.p2 = p2;
         this.p3 = p3;
@@ -36,6 +36,22 @@ public class GeometricTriangle {
 
     public Coordinate getP3() {
         return p3;
+    }
+
+    public Coordinate getNormalVector() {
+        Coordinate u = p1.subtract(p2);
+        Coordinate v = p1.subtract(p3);
+        return new Coordinate(
+                u.y() * v.z() - u.z() * v.y(),
+                u.z() * v.x() - u.x() * v.z(),
+                u.x() * v.y() - u.y() * v.x()
+        );
+    }
+
+    public PlaneCoordinate projectPoint(Coordinate point) {
+        return edgeIntersection(
+                new GeometricLine(point, point.subtract(getNormalVector()))
+        ).getU();
     }
 
     public Pair<PlaneCoordinate, GeometricLine.LineCoordinate> edgeIntersection(GeometricLine line) {
