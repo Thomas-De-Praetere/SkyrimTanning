@@ -40,4 +40,12 @@ public class Tuple implements NumberLike<Tuple> {
     public Tuple divide(double t) {
         return new Tuple(u / t, v / t);
     }
+
+    @Override
+    public String toString() {
+        return "[" +
+                u +
+                ", " + v +
+                ']';
+    }
 }

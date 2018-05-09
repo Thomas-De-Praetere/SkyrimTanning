@@ -27,4 +27,12 @@ public class Triple<T> {
         return z;
     }
 
+    @Override
+    public String toString() {
+        return "[" +
+                x +
+                ", " + y +
+                ", " + z +
+                ']';
+    }
 }

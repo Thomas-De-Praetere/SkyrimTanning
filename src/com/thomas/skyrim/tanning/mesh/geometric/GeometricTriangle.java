@@ -54,7 +54,7 @@ public class GeometricTriangle {
         ).getU();
     }
 
-    public Pair<PlaneCoordinate, GeometricLine.LineCoordinate> edgeIntersection(GeometricLine line) {
+    public Pair<PlaneCoordinate, LineCoordinate> edgeIntersection(GeometricLine line) {
         //Vector singleOf edge
         Coordinate n = line.getP2().subtract(line.getP1());
         //Root singleOf edge
@@ -75,35 +75,15 @@ public class GeometricTriangle {
 
         return Pair.of(
                 new PlaneCoordinate(u, v, this),
-                new GeometricLine.LineCoordinate(l, line)
+                new LineCoordinate(l, line)
         );
     }
 
-    public static class PlaneCoordinate {
-        private final double u;
-        private final double v;
-        private final GeometricTriangle triangle;
-
-        public PlaneCoordinate(double u, double v, GeometricTriangle triangle) {
-            this.u = u;
-            this.v = v;
-            this.triangle = triangle;
-        }
-
-        public double getU() {
-            return u;
-        }
-
-        public double getV() {
-            return v;
-        }
-
-        public GeometricTriangle getTriangle() {
-            return triangle;
-        }
-
-        public Coordinate toCoordinate() {
-            return triangle.p1.times(1 - u - v).add(triangle.p2.times(u)).add(triangle.p3.times(v));
-        }
+    @Override
+    public String toString() {
+        return
+                p1 + "(1 - u - v) + " +
+                        p2 + "u + v" +
+                        p3;
     }
 }

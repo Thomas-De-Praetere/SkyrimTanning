@@ -30,25 +30,8 @@ public class GeometricLine {
         return p2;
     }
 
-    public static class LineCoordinate {
-        private final double lambda;
-        private final GeometricLine line;
-
-        public LineCoordinate(double lambda, GeometricLine line) {
-            this.lambda = lambda;
-            this.line = line;
-        }
-
-        public double getLambda() {
-            return lambda;
-        }
-
-        public GeometricLine getLine() {
-            return line;
-        }
-
-        public Coordinate toCoordinate() {
-            return line.p1.times(1 - lambda).add(line.p2.times(lambda));
-        }
+    @Override
+    public String toString() {
+        return p1 + "(l - 1) + l" + p2;
     }
 }
