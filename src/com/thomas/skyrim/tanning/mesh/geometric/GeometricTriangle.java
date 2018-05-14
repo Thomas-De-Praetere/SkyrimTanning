@@ -3,6 +3,7 @@ package com.thomas.skyrim.tanning.mesh.geometric;
 import com.thomas.skyrim.tanning.mesh.data.Coordinate;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.util.Pair;
+import com.thomas.skyrim.tanning.util.Solver;
 
 /**
  * This class was created by thoma on 05-May-18.
@@ -55,23 +56,27 @@ public class GeometricTriangle {
     }
 
     public Pair<PlaneCoordinate, LineCoordinate> edgeIntersection(GeometricLine line) {
-        //Vector singleOf edge
-        Coordinate n = line.getP2().subtract(line.getP1());
-        //Root singleOf edge
-        Coordinate V = line.getP1();
+        Coordinate A = p1;
+        Coordinate B = p2.subtract(p1);
+        Coordinate C = p3.subtract(p1);
 
-        Coordinate A = p2.subtract(p1);
-        Coordinate B = p3.subtract(p1);
-        Coordinate C = p1.subtract(n);
+        Coordinate L = line.getP1();
+        Coordinate M = line.getP2().subtract(line.getP1());
+        Coordinate N = L.subtract(A);
 
-        double Q = A.y() - A.x() * V.y() / V.x();
-        double R = B.y() - B.x() * V.y() / V.x();
-        double S = C.x() - C.y();
+        //solve Bu + Cv - Ml = N (with u and v the parameters of the triangle and l the one of the line)
 
-        double v = (V.z() * (S * A.x() + Q * C.x()) - V.x() * (S * A.z() + Q * C.z())) /
-                (V.z() * (R * A.x() - Q * B.x()) - V.x() * (R * A.z() - Q * B.z()));
-        double u = (S - v * R) / Q;
-        double l = -(u * A.x() + v * B.x() + C.x()) / V.x();
+        Solver solver = new Solver(4,
+                B.x(), C.x(), -M.x(), N.x(),
+                B.y(), C.y(), -M.y(), N.y(),
+                B.z(), C.z(), -M.z(), N.z()
+        );
+
+        double[][] reduce = solver.reduce();
+
+        double u = reduce[0][3];
+        double v = reduce[1][3];
+        double l = reduce[2][3];
 
         return Pair.of(
                 new PlaneCoordinate(u, v, this),
