@@ -8,9 +8,9 @@ import com.thomas.skyrim.tanning.mesh.data.Coordinate;
 public class PlaneCoordinate {
     private final double u;
     private final double v;
-    private final GeometricTriangle triangle;
+    private final GeometricPlane triangle;
 
-    public PlaneCoordinate(double u, double v, GeometricTriangle triangle) {
+    public PlaneCoordinate(double u, double v, GeometricPlane triangle) {
         this.u = u;
         this.v = v;
         this.triangle = triangle;
@@ -24,7 +24,7 @@ public class PlaneCoordinate {
         return v;
     }
 
-    public GeometricTriangle getTriangle() {
+    public GeometricPlane getPlane() {
         return triangle;
     }
 

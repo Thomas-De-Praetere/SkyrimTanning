@@ -4,18 +4,17 @@ import com.thomas.skyrim.tanning.mesh.data.Edge;
 import com.thomas.skyrim.tanning.mesh.data.Mesh;
 import com.thomas.skyrim.tanning.mesh.data.Node;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
-import com.thomas.skyrim.tanning.mesh.load.Loader;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
-        String location = "C:\\Users\\thoma\\Downloads\\testSmall.nif";
-        boolean isBody = false;
-        Loader loader = new Loader();
-        List<Mesh> load = loader.load(location, isBody);
-
+        String armorLocation = "C:\\Users\\thoma\\Downloads\\testSmall.nif";
+        String bodyLocation = "C:\\Users\\thoma\\Downloads\\femalebody_1.nif";
+        String outputLocation = "C:\\Users\\thoma\\Downloads";
+        Algorithm algorithm = new Algorithm(bodyLocation, outputLocation);
+        algorithm.execute(Arrays.asList(armorLocation));
     }
 
     public static void checkMesh(Mesh mesh) {

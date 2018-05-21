@@ -28,4 +28,12 @@ public class Coordinate extends Triple<Double> implements NumberLike<Coordinate>
     public Coordinate divide(double t) {
         return new Coordinate(x / t, y / t, z / t);
     }
+
+    public double distance(Coordinate other) {
+        if (this == other) return 0.0;
+        double xDif = x - other.x;
+        double yDif = y - other.y;
+        double zDif = z - other.z;
+        return Math.sqrt(xDif * xDif + yDif * yDif + zDif * zDif);
+    }
 }
