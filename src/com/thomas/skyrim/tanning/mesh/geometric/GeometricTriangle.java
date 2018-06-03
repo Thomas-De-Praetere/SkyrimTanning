@@ -2,6 +2,7 @@ package com.thomas.skyrim.tanning.mesh.geometric;
 
 import com.thomas.skyrim.tanning.mesh.data.Coordinate;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
+import com.thomas.skyrim.tanning.util.Pair;
 
 /**
  * This class was created by thoma on 05-May-18.
@@ -27,5 +28,14 @@ public class GeometricTriangle extends GeometricPlane {
         return origin;
     }
 
+    @Override
+    public TriangleCoordinate projectPoint(Coordinate point) {
+        return TriangleCoordinate.of(super.projectPoint(point), this);
+    }
 
+    @Override
+    public Pair<TriangleCoordinate, EdgeCoordinate> edgeIntersection(GeometricEdge line) {
+        Pair<? extends PlaneCoordinate, EdgeCoordinate> pair = super.edgeIntersection(line);
+        return Pair.of(TriangleCoordinate.of(pair.getU(), this), pair.getV());
+    }
 }

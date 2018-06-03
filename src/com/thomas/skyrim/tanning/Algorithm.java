@@ -5,6 +5,7 @@ import com.thomas.skyrim.tanning.mesh.data.Mesh;
 import com.thomas.skyrim.tanning.mesh.data.Node;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.geometric.PlaneCoordinate;
+import com.thomas.skyrim.tanning.mesh.geometric.TriangleCoordinate;
 import com.thomas.skyrim.tanning.mesh.load.Loader;
 import com.thomas.skyrim.tanning.mesh.project.EdgeProjector;
 import com.thomas.skyrim.tanning.mesh.project.NodeProjector;
@@ -43,7 +44,7 @@ public class Algorithm {
 
     private Map<Triangle, ProjectedTriangle> projectMesh(Mesh base, Mesh mesh) {
         NodeProjector nodeProjector = new NodeProjector(base);
-        Map<Node, PlaneCoordinate> nodePlaneCoordinateMap = nodeProjector.projectNodes(mesh);
+        Map<Node, TriangleCoordinate> nodePlaneCoordinateMap = nodeProjector.projectNodes(mesh);
         EdgeProjector edgeProjector = new EdgeProjector(base);
         Map<Edge, ProjectedEdge> edgeToProjection = edgeProjector.projectEdges(mesh, nodePlaneCoordinateMap);
         Map<Triangle, ProjectedTriangle> projectedTriangles = new HashMap<>();
@@ -54,7 +55,7 @@ public class Algorithm {
         return projectedTriangles;
     }
 
-    private ProjectedTriangle projectTriangle(Triangle triangle, Map<Node, PlaneCoordinate> nodePlaneCoordinateMap, Map<Edge, ProjectedEdge> edgeToProjection) {
+    private ProjectedTriangle projectTriangle(Triangle triangle, Map<Node, TriangleCoordinate> nodePlaneCoordinateMap, Map<Edge, ProjectedEdge> edgeToProjection) {
         Map<Node, PlaneCoordinate> nodeMap = new HashMap<>();
         Map<Edge, ProjectedEdge> edgeMap = new HashMap<>();
 

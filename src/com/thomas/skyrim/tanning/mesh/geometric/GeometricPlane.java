@@ -46,11 +46,11 @@ public class GeometricPlane {
 
     public PlaneCoordinate projectPoint(Coordinate point) {
         return edgeIntersection(
-                new GeometricLine(point, point.subtract(getNormalVector()))
+                new GeometricEdge(point, point.subtract(getNormalVector()), null)
         ).getU();
     }
 
-    public Pair<PlaneCoordinate, LineCoordinate> edgeIntersection(GeometricLine line) {
+    public Pair<? extends PlaneCoordinate, EdgeCoordinate> edgeIntersection(GeometricEdge line) {
         Coordinate A = p1;
         Coordinate B = p2.subtract(p1);
         Coordinate C = p3.subtract(p1);
@@ -75,7 +75,7 @@ public class GeometricPlane {
 
         return Pair.of(
                 new PlaneCoordinate(u, v, this),
-                new LineCoordinate(l, line)
+                new EdgeCoordinate(l, line)
         );
     }
 

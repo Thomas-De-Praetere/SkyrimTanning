@@ -1,6 +1,7 @@
 package com.thomas.skyrim.tanning.mesh.project;
 
 import com.thomas.skyrim.tanning.mesh.data.Edge;
+import com.thomas.skyrim.tanning.mesh.geometric.EdgeCoordinate;
 import com.thomas.skyrim.tanning.mesh.geometric.LineCoordinate;
 import com.thomas.skyrim.tanning.mesh.geometric.PlaneCoordinate;
 
@@ -12,10 +13,10 @@ import java.util.List;
 public class ProjectedEdge {
     private final Edge origin;
     private final PlaneCoordinate start;
-    private final List<LineCoordinate> points;
+    private final List<EdgeCoordinate> points;
     private final PlaneCoordinate end;
 
-    public ProjectedEdge(Edge origin, PlaneCoordinate start, List<LineCoordinate> points, PlaneCoordinate end) {
+    public ProjectedEdge(Edge origin, PlaneCoordinate start, List<EdgeCoordinate> points, PlaneCoordinate end) {
         this.origin = origin;
         this.start = start;
         this.points = points;
@@ -30,7 +31,7 @@ public class ProjectedEdge {
         return start;
     }
 
-    public List<LineCoordinate> getPoints() {
+    public List<EdgeCoordinate> getPoints() {
         return points;
     }
 

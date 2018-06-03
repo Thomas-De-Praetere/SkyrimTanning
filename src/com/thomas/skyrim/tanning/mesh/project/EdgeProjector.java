@@ -1,13 +1,12 @@
 package com.thomas.skyrim.tanning.mesh.project;
 
-import com.thomas.skyrim.tanning.mesh.data.Coordinate;
-import com.thomas.skyrim.tanning.mesh.data.Edge;
-import com.thomas.skyrim.tanning.mesh.data.Mesh;
-import com.thomas.skyrim.tanning.mesh.data.Node;
+import com.thomas.skyrim.tanning.mesh.data.*;
+import com.thomas.skyrim.tanning.mesh.geometric.EdgeCoordinate;
+import com.thomas.skyrim.tanning.mesh.geometric.GeometricPlane;
 import com.thomas.skyrim.tanning.mesh.geometric.PlaneCoordinate;
+import com.thomas.skyrim.tanning.mesh.geometric.TriangleCoordinate;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class was created by thoma on 21-May-18.
@@ -19,7 +18,7 @@ public class EdgeProjector {
         this.base = base;
     }
 
-    public Map<Edge, ProjectedEdge> projectEdges(Mesh mesh, Map<Node, PlaneCoordinate> nodePlaneCoordinateMap) {
+    public Map<Edge, ProjectedEdge> projectEdges(Mesh mesh, Map<Node, TriangleCoordinate> nodePlaneCoordinateMap) {
         Map<Edge, ProjectedEdge> edgeMap = new HashMap<>();
         for (Edge edge : mesh.getEdges()) {
             ProjectedEdge projectedEdge = projectEdge(edge, nodePlaneCoordinateMap);
@@ -28,11 +27,34 @@ public class EdgeProjector {
         return edgeMap;
     }
 
-    private ProjectedEdge projectEdge(Edge edge, Map<Node, PlaneCoordinate> nodePlaneCoordinateMap) {
-        PlaneCoordinate start = nodePlaneCoordinateMap.get(edge.getStart());
-        PlaneCoordinate end = nodePlaneCoordinateMap.get(edge.getEnd());
+    private ProjectedEdge projectEdge(Edge edge, Map<Node, TriangleCoordinate> nodePlaneCoordinateMap) {
+        TriangleCoordinate start = nodePlaneCoordinateMap.get(edge.getStart());
+        TriangleCoordinate end = nodePlaneCoordinateMap.get(edge.getEnd());
 
         Coordinate meanProjectionVector = getMeanProjectionVector(start, end, edge);
+        GeometricPlane intersectionPlane = GeometricPlane.of(start.toCoordinate(), end.toCoordinate(), start.toCoordinate().subtract(meanProjectionVector));
+
+        List<EdgeCoordinate> projectedCoordinates = walkEdge(start, end, intersectionPlane);
+
+        return new ProjectedEdge(edge, start, projectedCoordinates, end);
+    }
+
+    private List<EdgeCoordinate> walkEdge(TriangleCoordinate start, TriangleCoordinate end, GeometricPlane intersectionPlane) {
+        if (start.getPlane().getOrigin().equals(end.getPlane().getOrigin())) return Collections.emptyList();
+
+        List<EdgeCoordinate> coordinates = new ArrayList<>();
+
+        Triangle currentTriangle = start.getPlane().getOrigin();
+        EdgeCoordinate currentProjection = findStartProjection(start, end, intersectionPlane);
+        coordinates.add(currentProjection);
+        while (!currentProjection.getLine().getOrigin().getTriangles().contains(end.getPlane().getOrigin())) {
+            Optional<Triangle> other = getOtherTriangle(currentTriangle, currentProjection);
+            if (!other.isPresent()) break;
+            currentTriangle = other.get();
+            currentProjection = findNextProjection(currentProjection, currentTriangle, intersectionPlane);
+            coordinates.add(currentProjection);
+        }
+        return coordinates;
     }
 
     private Coordinate getMeanProjectionVector(PlaneCoordinate start, PlaneCoordinate end, Edge edge) {

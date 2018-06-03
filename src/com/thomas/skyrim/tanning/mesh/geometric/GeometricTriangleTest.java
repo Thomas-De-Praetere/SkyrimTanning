@@ -15,7 +15,7 @@ public class GeometricTriangleTest {
 
     @Test
     public void test() {
-        GeometricTriangle triangle = new GeometricTriangle(
+        GeometricPlane triangle = new GeometricPlane(
                 new Coordinate(0., 0., 0.),
                 new Coordinate(2., 0., 0.),
                 new Coordinate(0., 2., 0.)
