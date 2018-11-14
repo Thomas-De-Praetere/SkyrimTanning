@@ -17,7 +17,7 @@ public class SinglePair<U> extends Pair<U, U> {
 
 
     public List<U> asList() {
-        return Arrays.asList(getU(), getV());
+        return Arrays.asList(getFirst(), getSecond());
     }
 
     @Override
@@ -25,13 +25,13 @@ public class SinglePair<U> extends Pair<U, U> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SinglePair<?> pair = (SinglePair<?>) o;
-        return (Objects.equals(getU(), pair.getU()) && Objects.equals(getV(), pair.getV()))
-                || (Objects.equals(getV(), pair.getU()) && Objects.equals(getU(), pair.getV()));
+        return (Objects.equals(getFirst(), pair.getFirst()) && Objects.equals(getSecond(), pair.getSecond()))
+                || (Objects.equals(getSecond(), pair.getFirst()) && Objects.equals(getFirst(), pair.getSecond()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getU(), getV()) + Objects.hash(getV(), getU());
+        return Objects.hash(getFirst(), getSecond()) + Objects.hash(getSecond(), getFirst());
     }
 
     public static <U> SinglePair<U> singleOf(U u, U v) {

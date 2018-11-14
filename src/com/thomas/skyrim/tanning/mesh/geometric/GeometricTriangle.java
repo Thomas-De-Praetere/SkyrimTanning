@@ -36,6 +36,6 @@ public class GeometricTriangle extends GeometricPlane {
     @Override
     public Pair<TriangleCoordinate, EdgeCoordinate> edgeIntersection(GeometricEdge line) {
         Pair<? extends PlaneCoordinate, EdgeCoordinate> pair = super.edgeIntersection(line);
-        return Pair.of(TriangleCoordinate.of(pair.getU(), this), pair.getV());
+        return Pair.of(TriangleCoordinate.of(pair.getFirst(), this), pair.getSecond());
     }
 }

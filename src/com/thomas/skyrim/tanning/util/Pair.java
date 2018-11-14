@@ -4,20 +4,20 @@ package com.thomas.skyrim.tanning.util;
  * This class was created by thoma on 05-May-18.
  */
 public class Pair<U, V> {
-    private final U u;
-    private final V v;
+    private final U first;
+    private final V second;
 
-    protected Pair(U u, V v) {
-        this.u = u;
-        this.v = v;
+    protected Pair(U first, V second) {
+        this.first = first;
+        this.second = second;
     }
 
-    public U getU() {
-        return u;
+    public U getFirst() {
+        return first;
     }
 
-    public V getV() {
-        return v;
+    public V getSecond() {
+        return second;
     }
 
     public static <U, V> Pair<U, V> of(U u, V v) {

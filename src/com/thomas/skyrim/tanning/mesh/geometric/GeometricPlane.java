@@ -47,7 +47,7 @@ public class GeometricPlane {
     public PlaneCoordinate projectPoint(Coordinate point) {
         return edgeIntersection(
                 new GeometricEdge(point, point.subtract(getNormalVector()), null)
-        ).getU();
+        ).getFirst();
     }
 
     public Pair<? extends PlaneCoordinate, EdgeCoordinate> edgeIntersection(GeometricEdge line) {
