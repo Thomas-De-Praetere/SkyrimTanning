@@ -10,12 +10,12 @@ import java.util.Map;
 /**
  * This class was created by thoma on 21-May-18.
  */
-public class ProjectedTriangle {
+public class ProjectedFace {
     private final Triangle origin;
     private final Map<Edge, ProjectedEdge> edgeToProjection;
     private final Map<Node, PlaneCoordinate> nodeToProjection;
 
-    public ProjectedTriangle(Triangle origin, Map<Edge, ProjectedEdge> edgeToProjection, Map<Node, PlaneCoordinate> nodeToProjection) {
+    public ProjectedFace(Triangle origin, Map<Edge, ProjectedEdge> edgeToProjection, Map<Node, PlaneCoordinate> nodeToProjection) {
         this.origin = origin;
         this.edgeToProjection = edgeToProjection;
         this.nodeToProjection = nodeToProjection;

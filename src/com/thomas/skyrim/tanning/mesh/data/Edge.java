@@ -1,9 +1,7 @@
 package com.thomas.skyrim.tanning.mesh.data;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,28 +11,23 @@ import java.util.Set;
  */
 public class Edge {
 
-    private final List<Node> nodes;
-    private final Set<Triangle> triangles;
+    private final Node start;
+    private final Node end;
 
-    public Edge(List<Node> nodes) {
-        this.nodes = nodes;
-        Preconditions.checkArgument(nodes.size() == 2);
-        this.triangles = new HashSet<>();
+    public Edge(Node start, Node end) {
+        this.start = start;
+        this.end = end;
     }
 
     public Node getStart() {
-        return nodes.get(0);
+        return start;
     }
 
     public Node getEnd() {
-        return nodes.get(1);
+        return end;
     }
 
-    public List<Node> getNodes() {
-        return nodes;
-    }
-
-    public Set<Triangle> getTriangles() {
-        return triangles;
+    public Set<Node> getNodes() {
+        return Sets.newHashSet(start, end);
     }
 }

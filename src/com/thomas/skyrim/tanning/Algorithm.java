@@ -10,7 +10,7 @@ import com.thomas.skyrim.tanning.mesh.load.Loader;
 import com.thomas.skyrim.tanning.mesh.project.EdgeProjector;
 import com.thomas.skyrim.tanning.mesh.project.NodeProjector;
 import com.thomas.skyrim.tanning.mesh.project.ProjectedEdge;
-import com.thomas.skyrim.tanning.mesh.project.ProjectedTriangle;
+import com.thomas.skyrim.tanning.mesh.project.ProjectedFace;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,24 +38,24 @@ public class Algorithm {
     private void project(String location, Mesh base) {
         List<Mesh> load = loader.load(location, false);
         for (Mesh mesh : load) {
-            Map<Triangle, ProjectedTriangle> projectedTriangles = projectMesh(base, mesh);
+            Map<Triangle, ProjectedFace> projectedTriangles = projectMesh(base, mesh);
         }
     }
 
-    private Map<Triangle, ProjectedTriangle> projectMesh(Mesh base, Mesh mesh) {
+    private Map<Triangle, ProjectedFace> projectMesh(Mesh base, Mesh mesh) {
         NodeProjector nodeProjector = new NodeProjector(base);
         Map<Node, TriangleCoordinate> nodePlaneCoordinateMap = nodeProjector.projectNodes(mesh);
         EdgeProjector edgeProjector = new EdgeProjector(base);
         Map<Edge, ProjectedEdge> edgeToProjection = edgeProjector.projectEdges(mesh, nodePlaneCoordinateMap);
-        Map<Triangle, ProjectedTriangle> projectedTriangles = new HashMap<>();
+        Map<Triangle, ProjectedFace> projectedTriangles = new HashMap<>();
         for (Triangle triangle : mesh.getTriangles()) {
-            ProjectedTriangle projection = projectTriangle(triangle, nodePlaneCoordinateMap, edgeToProjection);
+            ProjectedFace projection = projectTriangle(triangle, nodePlaneCoordinateMap, edgeToProjection);
             projectedTriangles.put(triangle, projection);
         }
         return projectedTriangles;
     }
 
-    private ProjectedTriangle projectTriangle(Triangle triangle, Map<Node, TriangleCoordinate> nodePlaneCoordinateMap, Map<Edge, ProjectedEdge> edgeToProjection) {
+    private ProjectedFace projectTriangle(Triangle triangle, Map<Node, TriangleCoordinate> nodePlaneCoordinateMap, Map<Edge, ProjectedEdge> edgeToProjection) {
         Map<Node, PlaneCoordinate> nodeMap = new HashMap<>();
         Map<Edge, ProjectedEdge> edgeMap = new HashMap<>();
 
@@ -65,6 +65,6 @@ public class Algorithm {
         for (Edge edge : triangle.getEdges()) {
             edgeMap.put(edge, edgeToProjection.get(edge));
         }
-        return new ProjectedTriangle(triangle, edgeMap, nodeMap);
+        return new ProjectedFace(triangle, edgeMap, nodeMap);
     }
 }

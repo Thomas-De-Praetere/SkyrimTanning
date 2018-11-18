@@ -75,32 +75,21 @@ public class Loader {
         List<Edge> edges = new ArrayList<>();
         Map<SinglePair<Node>, Edge> nodeToEdge = new HashMap<>();
         for (Triangle triangle : triangles) {
-            List<Node> triNodes = triangle.getNodes();
-
-            List<Edge> triEdges = new ArrayList<>(3);
+            List<Node> triNodes = new ArrayList<>(triangle.getNodes());
 
             List<int[]> list = Arrays.asList(new int[]{0, 1}, new int[]{1, 2}, new int[]{2, 0});
             for (int[] ints : list) {
                 SinglePair<Node> pair = SinglePair.singleOf(triNodes.get(ints[0]), triNodes.get(ints[1]));
-                Edge edge = getEdge(pair, edges, nodeToEdge);
-
-                triEdges.add(edge);
+                Edge edge = getEdge(pair, nodeToEdge);
+                edges.add(edge);
             }
-            for (Edge edge : triEdges) {
-                edge.getTriangles().add(triangle);
-                for (Node node : edge.getNodes()) {
-                    node.getEdges().add(edge);
-                }
-            }
-            triangle.getEdges().addAll(triEdges);
         }
         return edges;
     }
 
-    private Edge getEdge(SinglePair<Node> pair, List<Edge> edges, Map<SinglePair<Node>, Edge> nodeToEdge) {
+    private Edge getEdge(SinglePair<Node> pair, Map<SinglePair<Node>, Edge> nodeToEdge) {
         if (nodeToEdge.containsKey(pair)) return nodeToEdge.get(pair);
-        Edge edge = new Edge(pair.asList());
-        edges.add(edge);
+        Edge edge = new Edge(pair.getFirst(), pair.getSecond());
         nodeToEdge.put(pair, edge);
         return edge;
     }
@@ -111,13 +100,8 @@ public class Loader {
             Node node1 = nodes.get(triple.x());
             Node node2 = nodes.get(triple.y());
             Node node3 = nodes.get(triple.z());
-
-            List<Node> triNodes = Arrays.asList(node1, node2, node3);
-
-            Triangle triangle = new Triangle(triNodes);
+            Triangle triangle = new Triangle(node1, node2, node3);
             triangles.add(triangle);
-
-            triNodes.forEach(n -> n.getTriangles().add(triangle));
         }
         return triangles;
     }
