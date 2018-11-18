@@ -7,6 +7,7 @@ import com.thomas.skyrim.tanning.mesh.project.results.ProjectedFace;
 import com.thomas.skyrim.tanning.mesh.project.results.ProjectedNode;
 
 import java.util.Map;
+import java.util.Stack;
 
 /**
  *
@@ -21,6 +22,7 @@ public class TriangleProjector {
     }
 
     public ProjectedFace project(Triangle triangle) {
-        throw new UnsupportedOperationException();
+        Stack<ProjectedNode> stack = new Stack<>();
+        triangle.getNodes().stream().map(nodeToProjectedNode::get).forEach(stack::push);
     }
 }
