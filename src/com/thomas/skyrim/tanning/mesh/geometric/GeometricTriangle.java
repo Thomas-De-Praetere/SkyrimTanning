@@ -17,9 +17,9 @@ public class GeometricTriangle extends GeometricPlane {
 
     public static GeometricTriangle of(Triangle triangle) {
         return new GeometricTriangle(
-                triangle.getNodes().get(0).getCoordinate(),
-                triangle.getNodes().get(1).getCoordinate(),
-                triangle.getNodes().get(2).getCoordinate(),
+                triangle.getN1().getCoordinate(),
+                triangle.getN2().getCoordinate(),
+                triangle.getN3().getCoordinate(),
                 triangle
         );
     }

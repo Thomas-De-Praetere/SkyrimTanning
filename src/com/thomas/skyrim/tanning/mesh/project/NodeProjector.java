@@ -4,8 +4,8 @@ import com.thomas.skyrim.tanning.mesh.data.Mesh;
 import com.thomas.skyrim.tanning.mesh.data.Node;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.geometric.GeometricTriangle;
-import com.thomas.skyrim.tanning.mesh.geometric.PlaneCoordinate;
 import com.thomas.skyrim.tanning.mesh.geometric.TriangleCoordinate;
+import com.thomas.skyrim.tanning.mesh.project.results.ProjectedNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +20,8 @@ public class NodeProjector {
         this.base = base;
     }
 
-    public Map<Node, TriangleCoordinate> projectNodes(Mesh mesh) {
-        Map<Node, TriangleCoordinate> map = new HashMap<>();
+    public Map<Node, ProjectedNode> projectNodes(Mesh mesh) {
+        Map<Node, ProjectedNode> map = new HashMap<>();
         for (Node node : mesh.getNodes()) {
             TriangleCoordinate closest = null;
             double dist = Double.POSITIVE_INFINITY;
@@ -35,7 +35,7 @@ public class NodeProjector {
                 }
             }
             if (closest != null) {
-                map.put(node, closest);
+                map.put(node, new ProjectedNode(node, closest));
             }
         }
         return map;
