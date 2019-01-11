@@ -20,3 +20,12 @@ This can all seem a bit fuzzy but think about what would go wrong if the occludi
 We would also try to use a QuadTree over the body to quickly find triangles without having to search the entire space.
 
 Impromptu idea: maybe we only need an outline and not the internal shapes. Just foolow the projected border of a triangle and cut it when the shape cuts (which is automatical in a Nif) This is easier to calculate and therfore faster.
+
+## New idea
+We map each pixel in the texture to the triangle its on. Then we calculate trace edges along the normal of the triangle starting in the center of the projected pixel on the triangle. For each edge, we calculate whether it gets blocked or not. The percentage of edges that are blocked is the gray-value of the node.
+
+This is a very rough algorithm and the pure version will take a long time. But as we are using Skyrim bodies, we can assume that a triangle is small enough that if each node is covered, the entire triangle, and thus all pixels in it, are covered. We assume that there is no hole in the surrounding mesh that is smaller than the size of a body triangle.
+
+We assume locality. We assume that pixels next to eachother are mapped on triangles near each other. That way if we find a triangle that crosses a trace edge, we know that triangles near that triangle could be crossing other trace edges of the same pixel and pixels nearby. Therefore we can use a breadth first search on the neighbours of the first triangle we cross. That way we will still check all triangles, but if it crosses one, we will find it faster because it is looked at earlier.
+
+Another thing we can do is work with bounding boxes. If the trace does not intersect with the bounding box, it is not covered by the surrounding mesh.
