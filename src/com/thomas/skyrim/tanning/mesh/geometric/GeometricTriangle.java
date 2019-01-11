@@ -28,14 +28,18 @@ public class GeometricTriangle extends GeometricPlane {
         return origin;
     }
 
+    public Coordinate getCenter() {
+        return p1.add(p2).add(p3).divide(3.0);
+    }
+
     @Override
     public TriangleCoordinate projectPoint(Coordinate point) {
         return TriangleCoordinate.of(super.projectPoint(point), this);
     }
 
     @Override
-    public Pair<TriangleCoordinate, EdgeCoordinate> edgeIntersection(GeometricEdge line) {
-        Pair<? extends PlaneCoordinate, EdgeCoordinate> pair = super.edgeIntersection(line);
+    public Pair<TriangleCoordinate, LineCoordinate> edgeIntersection(GeometricLine line) {
+        Pair<? extends PlaneCoordinate, LineCoordinate> pair = super.edgeIntersection(line);
         return Pair.of(TriangleCoordinate.of(pair.getFirst(), this), pair.getSecond());
     }
 }

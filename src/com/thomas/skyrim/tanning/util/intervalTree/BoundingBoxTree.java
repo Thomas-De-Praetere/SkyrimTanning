@@ -1,13 +1,11 @@
 package com.thomas.skyrim.tanning.util.intervalTree;
 
+import com.thomas.skyrim.tanning.mesh.data.BoundingBox;
 import com.thomas.skyrim.tanning.mesh.data.Coordinate;
 import com.thomas.skyrim.tanning.mesh.data.Node;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,5 +55,18 @@ public class BoundingBoxTree {
         box.put(Y, DoubleRange.of(ly, hy));
         box.put(Z, DoubleRange.of(lz, hz));
         return box;
+    }
+
+    public Set<Triangle> getInBox(BoundingBox boundingBox) {
+        Map<String, Double> lowerPoint = new HashMap<>();
+        lowerPoint.put(X, boundingBox.getLower().x());
+        lowerPoint.put(Y, boundingBox.getLower().y());
+        lowerPoint.put(Z, boundingBox.getLower().z());
+
+        Map<String, Double> upperPoint = new HashMap<>();
+        upperPoint.put(X, boundingBox.getUpper().x());
+        upperPoint.put(Y, boundingBox.getUpper().y());
+        upperPoint.put(Z, boundingBox.getUpper().z());
+        return internalTree.getInBox(lowerPoint, upperPoint);
     }
 }

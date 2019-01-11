@@ -22,6 +22,10 @@ public class GeometricLine {
         );
     }
 
+    public static GeometricLine of(Coordinate p1, Coordinate p2) {
+        return new GeometricLine(p1, p2);
+    }
+
     public Coordinate getP1() {
         return p1;
     }

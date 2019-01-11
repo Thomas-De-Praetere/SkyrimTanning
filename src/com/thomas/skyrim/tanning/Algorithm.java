@@ -1,12 +1,15 @@
 package com.thomas.skyrim.tanning;
 
+import com.thomas.skyrim.tanning.algorithm.CoveredChecker;
 import com.thomas.skyrim.tanning.mesh.data.Mesh;
+import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.load.Loader;
-import com.thomas.skyrim.tanning.mesh.project.MeshProjector;
-import com.thomas.skyrim.tanning.mesh.project.results.ProjectedMesh;
+import com.thomas.skyrim.tanning.util.intervalTree.BoundingBoxTree;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This class was created by thoma on 01-May-18.
@@ -28,15 +31,25 @@ public class Algorithm {
     }
 
     private void project(String location, Mesh base) {
-        MeshProjector projector = new MeshProjector(base);
+        List<Mesh> meshes = loader.load(location, false);
 
-        List<Mesh> load = loader.load(location, false);
-        List<ProjectedMesh> projectedMeshes = new ArrayList<>();
-        for (Mesh mesh : load) {
-            ProjectedMesh project = projector.project(mesh);
-            projectedMeshes.add(project);
+        List<BoundingBoxTree> boundingBoxTrees = meshes.stream()
+                .map(Mesh::getTriangles)
+                .map(BoundingBoxTree::new)
+                .collect(Collectors.toList());
+
+        CoveredChecker checker = new CoveredChecker(boundingBoxTrees);
+
+        Set<Triangle> covered = new HashSet<>();
+        Set<Triangle> unCovered = new HashSet<>();
+
+        for (Triangle triangle : base.getTriangles()) {
+            if (checker.isCovered(triangle)) {
+                covered.add(triangle);
+            } else {
+                unCovered.add(triangle);
+            }
         }
-        //Do more
     }
 
 }

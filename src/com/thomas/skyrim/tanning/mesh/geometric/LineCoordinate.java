@@ -22,6 +22,9 @@ public class LineCoordinate {
         return 0 <= lambda && lambda <= 1;
     }
 
+    public boolean hasPositiveDirection() {
+        return 0 <= lambda;
+    }
 
     public GeometricLine getLine() {
         return line;
