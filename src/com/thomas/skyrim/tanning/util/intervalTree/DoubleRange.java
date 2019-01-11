@@ -6,7 +6,7 @@ import com.thomas.skyrim.tanning.util.Pair;
  *
  */
 public class DoubleRange extends Pair<Double, Double> {
-    public DoubleRange(Double first, Double second) {
+    private DoubleRange(Double first, Double second) {
         super(first, second);
     }
 
@@ -52,6 +52,10 @@ public class DoubleRange extends Pair<Double, Double> {
 
     public boolean contains(double number) {
         return (isAscending()) ? getStart() <= number && number <= getEnd() : getEnd() <= number && number <= getStart();
+    }
+
+    public static DoubleRange of(Double first, Double second) {
+        return new DoubleRange(first, second);
     }
 
 }

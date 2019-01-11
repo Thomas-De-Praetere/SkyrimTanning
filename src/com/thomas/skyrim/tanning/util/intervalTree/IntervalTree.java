@@ -56,6 +56,16 @@ public class IntervalTree<K, V> {
         return result;
     }
 
+    public Set<V> getInBox(Map<K, Double> lowerPoint, Map<K, Double> upperPoint) {
+        if (isEmpty()) return entries;
+        Double fromDouble = map.floorKey(lowerPoint.get(key));
+        Double toDouble = map.ceilingKey(upperPoint.get(key));
+        SortedMap<Double, IntervalTree<K, V>> subMap = map.subMap(fromDouble, toDouble);
+        return subMap.values().stream()
+                .flatMap(t -> t.getInBox(lowerPoint, upperPoint).stream())
+                .collect(Collectors.toSet());
+    }
+
     public Set<V> get(Map<K, Double> point) {
         if (isEmpty()) {
             return entries;

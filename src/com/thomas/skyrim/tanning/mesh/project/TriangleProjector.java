@@ -24,5 +24,10 @@ public class TriangleProjector {
     public ProjectedFace project(Triangle triangle) {
         Stack<ProjectedNode> stack = new Stack<>();
         triangle.getNodes().stream().map(nodeToProjectedNode::get).forEach(stack::push);
+        ProjectedNode start = stack.peek();
+        while (!stack.empty()){
+            ProjectedNode pop = stack.pop();
+
+        }
     }
 }

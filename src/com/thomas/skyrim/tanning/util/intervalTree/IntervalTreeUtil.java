@@ -9,8 +9,8 @@ import java.util.*;
 /**
  *
  */
-public class IntervalTreeUtil {
-    public static <V> TreeMap<Double, Set<V>> order(Multimap<DoubleRange, V> map) {
+class IntervalTreeUtil {
+    static <V> TreeMap<Double, Set<V>> order(Multimap<DoubleRange, V> map) {
         TreeMap<Double, Set<V>> result = new TreeMap<>();
 
         PriorityQueue<Pair<DoubleRange, Set<V>>> startSorted = createStartSorted(map);
