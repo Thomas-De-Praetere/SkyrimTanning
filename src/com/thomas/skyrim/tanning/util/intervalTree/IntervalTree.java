@@ -22,6 +22,7 @@ public class IntervalTree<K, V> {
 
     public IntervalTree(List<K> evaluationOrder, Map<V, Map<K, DoubleRange>> valueToCuboid) {
         this(evaluationOrder, valueToCuboid, 0);
+        System.out.println(String.format("Initialised tree with %d cubes.", valueToCuboid.size()));
     }
 
     private IntervalTree(List<K> evaluationOrder, Map<V, Map<K, DoubleRange>> valueToCuboid, int index) {
@@ -59,7 +60,9 @@ public class IntervalTree<K, V> {
     public Set<V> getInBox(Map<K, Double> lowerPoint, Map<K, Double> upperPoint) {
         if (isEmpty()) return entries;
         Double fromDouble = map.floorKey(lowerPoint.get(key));
+        fromDouble = (fromDouble == null) ? map.firstKey() : fromDouble;
         Double toDouble = map.ceilingKey(upperPoint.get(key));
+        toDouble = (toDouble == null) ? map.lastKey() : toDouble;
         SortedMap<Double, IntervalTree<K, V>> subMap = map.subMap(fromDouble, toDouble);
         return subMap.values().stream()
                 .flatMap(t -> t.getInBox(lowerPoint, upperPoint).stream())

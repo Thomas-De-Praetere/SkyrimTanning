@@ -16,7 +16,9 @@ public class BoundingBoxTree {
     private static final String Y = "y";
     private static final String Z = "z";
     private static final List<String> evaluationOrder = Arrays.asList(X, Y, Z);
-    private final IntervalTree<String, Triangle> internalTree;
+  //  private final IntervalTree<String, Triangle> internalTree;
+
+    private final Set<Triangle> triangles;
 
     public BoundingBoxTree(List<Triangle> triangles) {
         Map<Triangle, Map<String, DoubleRange>> triangleToBoundingBox = triangles.stream()
@@ -24,9 +26,9 @@ public class BoundingBoxTree {
                         t -> t,
                         this::createBox
                 ));
+        this.triangles = new HashSet<>(triangles);
 
-
-        internalTree = new IntervalTree<>(evaluationOrder, triangleToBoundingBox);
+     //   internalTree = new IntervalTree<>(evaluationOrder, triangleToBoundingBox);
     }
 
     private Map<String, DoubleRange> createBox(Triangle triangle) {
@@ -58,6 +60,7 @@ public class BoundingBoxTree {
     }
 
     public Set<Triangle> getInBox(BoundingBox boundingBox) {
+        return triangles;/*
         Map<String, Double> lowerPoint = new HashMap<>();
         lowerPoint.put(X, boundingBox.getLower().x());
         lowerPoint.put(Y, boundingBox.getLower().y());
@@ -67,6 +70,6 @@ public class BoundingBoxTree {
         upperPoint.put(X, boundingBox.getUpper().x());
         upperPoint.put(Y, boundingBox.getUpper().y());
         upperPoint.put(Z, boundingBox.getUpper().z());
-        return internalTree.getInBox(lowerPoint, upperPoint);
+        return internalTree.getInBox(lowerPoint, upperPoint);*/
     }
 }

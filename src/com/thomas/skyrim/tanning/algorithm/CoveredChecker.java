@@ -18,18 +18,22 @@ import java.util.Set;
  */
 public class CoveredChecker {
     private final List<BoundingBoxTree> treesOfMeshes;
+    private boolean tryr = true;
 
     public CoveredChecker(List<BoundingBoxTree> treesOfMeshes) {
         this.treesOfMeshes = treesOfMeshes;
     }
 
     public boolean isCovered(Triangle triangle) {
+//        tryr = !tryr;
+//        return tryr;
         BoundingBox boundingBox = getBoundingBox(triangle);
         GeometricTriangle geoTri = GeometricTriangle.of(triangle);
         GeometricLine ray = GeometricLine.of(geoTri.getCenter(), geoTri.getCenter().add(geoTri.getNormalVector()));
 
         for (BoundingBoxTree meshTree : treesOfMeshes) {
             Set<Triangle> inBox = meshTree.getInBox(boundingBox);
+//            System.out.println(inBox.size());
             for (Triangle outsideTri : inBox) {
                 GeometricTriangle outside = GeometricTriangle.of(outsideTri);
                 Pair<TriangleCoordinate, LineCoordinate> pair = outside.edgeIntersection(ray);
@@ -43,7 +47,7 @@ public class CoveredChecker {
     private BoundingBox getBoundingBox(Triangle triangle) {
         GeometricTriangle geoTri = GeometricTriangle.of(triangle);
         Coordinate center = geoTri.getCenter();
-        Coordinate co = new Coordinate(10, 10, 10);
+        Coordinate co = new Coordinate(1, 1, 1);
         return new BoundingBox(
                 center.subtract(co),
                 center.add(co)
