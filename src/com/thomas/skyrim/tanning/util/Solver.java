@@ -27,13 +27,13 @@ public class Solver {
 
     public double[][] reduce() {
         int rowIndex = 0;
-        while (rowIndex < rows) {
+        while (rowIndex < rows - 1) {
             sort(rowIndex);
             reduce(rowIndex);
             rowIndex++;
         }
         rowIndex = rows - 1;
-        while (rowIndex >= 0) {
+        while (rowIndex >= 1) {
             reverseReduce(rowIndex);
             rowIndex--;
         }
@@ -55,7 +55,7 @@ public class Solver {
 
     private void reduce(int row) {
         for (int i = row + 1; i < rows; i++) {
-            subtract(row, i, matrix[row][i] / matrix[row][row]);
+            subtract(row, i, matrix[i][row] / matrix[row][row]);
         }
     }
 
@@ -67,7 +67,7 @@ public class Solver {
 
     private void reverseReduce(int row) {
         for (int i = row - 1; i >= 0; i--) {
-            subtract(row, i, matrix[row][i] / matrix[row][row]);
+            subtract(row, i, matrix[i][row] / matrix[row][row]);
         }
     }
 

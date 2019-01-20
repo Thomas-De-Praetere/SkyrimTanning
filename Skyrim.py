@@ -34,7 +34,7 @@ def getMesh( shape ):
     data = findNodeInTree(shape, NifFormat.NiTriShapeData)
     
     iNodes = data.vertices
-    iUvs =  data.uv_sets[0]
+    iUvs = data.uv_sets[0]
     iTriangles = data.triangles
     
     return (iNodes, iTriangles, iUvs);

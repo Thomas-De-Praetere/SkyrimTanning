@@ -35,8 +35,8 @@ public class GeometricPlane {
     }
 
     public Coordinate getNormalVector() {
-        Coordinate u = p1.subtract(p2);
-        Coordinate v = p1.subtract(p3);
+        Coordinate u = p2.subtract(p1);
+        Coordinate v = p3.subtract(p1);
         return new Coordinate(
                 u.y() * v.z() - u.z() * v.y(),
                 u.z() * v.x() - u.x() * v.z(),
