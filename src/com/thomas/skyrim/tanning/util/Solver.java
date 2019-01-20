@@ -44,7 +44,7 @@ public class Solver {
     private void sort(int column) {
         if (matrix[column][column] != 0.0) return;
         for (int i = column + 1; i < rows; i++) {
-            if (matrix[i][column] > 0.0) {
+            if (matrix[i][column] != 0.0) {
                 double[] dummy = matrix[column];
                 matrix[column] = matrix[i];
                 matrix[i] = dummy;

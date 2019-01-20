@@ -36,4 +36,8 @@ public class Coordinate extends Triple<Double> implements NumberLike<Coordinate>
         double zDif = z - other.z;
         return Math.sqrt(xDif * xDif + yDif * yDif + zDif * zDif);
     }
+
+    public double dot(Coordinate other) {
+        return x * other.x + y * other.y + z * other.z;
+    }
 }

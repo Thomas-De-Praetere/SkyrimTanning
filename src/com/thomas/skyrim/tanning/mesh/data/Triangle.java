@@ -38,13 +38,4 @@ public class Triangle {
     public Set<Node> getNodes() {
         return Sets.newHashSet(n1, n2, n3);
     }
-
-    public Polygon toProjectedPolygon(int size) {
-        Polygon polygon = new Polygon();
-        for (Node node : getNodes()) {
-            Tuple uv = node.getUv();
-            polygon.addPoint((int) Math.round(uv.u() * (double) size), (int) Math.round(uv.v() * (double) size));
-        }
-        return polygon;
-    }
 }

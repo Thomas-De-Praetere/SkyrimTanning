@@ -2,6 +2,7 @@ package com.thomas.skyrim.tanning;
 
 import com.google.common.io.Files;
 import com.thomas.skyrim.tanning.algorithm.CoveredChecker;
+import com.thomas.skyrim.tanning.algorithm.CoveredTriangle;
 import com.thomas.skyrim.tanning.mesh.data.Mesh;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.load.Loader;
@@ -52,23 +53,21 @@ public class Algorithm {
 
         CoveredChecker checker = new CoveredChecker(boundingBoxTrees);
 
-        Set<Triangle> covered = new HashSet<>();
-        Set<Triangle> unCovered = new HashSet<>();
+        Set<CoveredTriangle> processedTriangles = new HashSet<>();
 
         System.out.println("Start Covering");
 
         for (Triangle triangle : base.getTriangles()) {
-            if (checker.isCovered(triangle)) {
-                covered.add(triangle);
-            } else {
-                unCovered.add(triangle);
-            }
+            double covered = checker.isCovered(triangle);
+            processedTriangles.add(new CoveredTriangle(triangle, (float) covered));
+
         }
         BufferedImage image = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(Color.BLACK);
-        for (Triangle triangle : covered) {
-            graphics.fillPolygon(triangle.toProjectedPolygon(1024));
+        for (CoveredTriangle triangle : processedTriangles) {
+            if (!triangle.isCovered()) continue;
+            triangle.write(graphics, 1024);
         }
 
         ImageIO.write(
@@ -76,5 +75,6 @@ public class Algorithm {
                 "png",
                 Paths.get(outputLocation, Files.getNameWithoutExtension(Paths.get(location).getFileName().toString()) + ".png").toFile()
         );
+        System.out.println("Done");
     }
 }
