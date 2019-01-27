@@ -10,6 +10,9 @@ import java.awt.*;
  *
  */
 public class CoveredTriangle {
+    //TODO -make this remember it's neighbours
+    //TODO -make this paint itself with a gradient. Starting from it's covered value in the center
+    //TODO  to the mean covered value at the edges with the neighbours.
     private final Triangle triangle;
     private final float covered;
 
@@ -26,6 +29,14 @@ public class CoveredTriangle {
             polygon.addPoint((int) Math.round(uv.u() * (double) size), (int) Math.round(uv.v() * (double) size));
         }
         graphics.fillPolygon(polygon);
+    }
+
+    public Triangle getTriangle() {
+        return triangle;
+    }
+
+    public float getCovered() {
+        return covered;
     }
 
     public boolean isCovered() {

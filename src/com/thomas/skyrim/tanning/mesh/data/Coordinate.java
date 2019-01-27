@@ -4,6 +4,7 @@ package com.thomas.skyrim.tanning.mesh.data;
  * This class was created by thoma on 24-Apr-18.
  */
 public class Coordinate extends Triple<Double> implements NumberLike<Coordinate> {
+    public static final Coordinate ORIGIN = new Coordinate(0, 0, 0);
 
     public Coordinate(double x, double y, double z) {
         super(x, y, z);

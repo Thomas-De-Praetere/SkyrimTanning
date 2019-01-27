@@ -84,6 +84,10 @@ public class Mesh {
         return triangleToEdge.get(t);
     }
 
+    public List<Triangle> getTriangles(Edge edge) {
+        return edgeToTriangle.get(edge);
+    }
+
     @Override
     public String toString() {
         return "Mesh{" +
