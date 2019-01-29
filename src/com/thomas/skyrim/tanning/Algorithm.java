@@ -1,9 +1,12 @@
 package com.thomas.skyrim.tanning;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
 import com.thomas.skyrim.tanning.algorithm.CoveredChecker;
 import com.thomas.skyrim.tanning.algorithm.CoveredTriangle;
+import com.thomas.skyrim.tanning.algorithm.PixelTransformer;
 import com.thomas.skyrim.tanning.algorithm.writer.CoveredTriangleWriter;
 import com.thomas.skyrim.tanning.mesh.data.Edge;
 import com.thomas.skyrim.tanning.mesh.data.Mesh;
@@ -11,10 +14,7 @@ import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.load.Loader;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,15 +58,39 @@ public class Algorithm {
             processedTriangles.add(new CoveredTriangle(triangle, (float) covered));
         }
 
-        processedTriangles = blurTriangles(processedTriangles, base);
+        SetMultimap<Triangle, Triangle> triToNeighbours = createNeighbourMap(base);
+        processedTriangles = blurTriangles(processedTriangles, triToNeighbours);
+        List<PixelTransformer> pixelTransformers = createPixelTransformers(processedTriangles, triToNeighbours);
 
         System.out.println("Covering done.");
         CoveredTriangleWriter coveredTriangleWriter = new CoveredTriangleWriter(location, outputLocation);
-        coveredTriangleWriter.write(processedTriangles);
+        coveredTriangleWriter.write(pixelTransformers);
         System.out.println("Done");
     }
 
-    private Set<CoveredTriangle> blurTriangles(Set<CoveredTriangle> processedTriangles, Mesh base) {
+    private List<PixelTransformer> createPixelTransformers(Set<CoveredTriangle> processedTriangles, SetMultimap<Triangle, Triangle> triToNeighbours) {
+        Map<Triangle, CoveredTriangle> translationMap = processedTriangles.stream()
+                .collect(Collectors.toMap(CoveredTriangle::getTriangle, c -> c));
+        ListMultimap<CoveredTriangle, CoveredTriangle> neighbourMap = ArrayListMultimap.create();
+        for (Triangle triangle : triToNeighbours.keySet()) {
+            CoveredTriangle key = translationMap.get(triangle);
+            for (Triangle neigh : triToNeighbours.get(triangle)) {
+                neighbourMap.put(
+                        key,
+                        translationMap.get(neigh)
+                );
+            }
+        }
+        List<PixelTransformer> transformers = new ArrayList<>();
+        for (CoveredTriangle processedTriangle : processedTriangles) {
+            PixelTransformer transformer = new PixelTransformer(neighbourMap, processedTriangle);
+            transformers.add(transformer);
+        }
+        return transformers;
+    }
+
+
+    private SetMultimap<Triangle, Triangle> createNeighbourMap(Mesh base) {
         SetMultimap<Triangle, Triangle> triToNeighbours = HashMultimap.create();
 
         for (Triangle triangle : base.getTriangles()) {
@@ -80,6 +104,10 @@ public class Algorithm {
                 }
             }
         }
+        return triToNeighbours;
+    }
+
+    private Set<CoveredTriangle> blurTriangles(Set<CoveredTriangle> processedTriangles, SetMultimap<Triangle, Triangle> triToNeighbours) {
         for (int i = 0; i < TIMES; i++) {
             processedTriangles = blur(processedTriangles, triToNeighbours);
         }
