@@ -5,6 +5,8 @@ import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.data.Tuple;
 
 import java.awt.*;
+import java.util.List;
+
 
 /**
  *
@@ -42,4 +44,5 @@ public class CoveredTriangle {
     public boolean isCovered() {
         return covered < 1.0;
     }
+
 }

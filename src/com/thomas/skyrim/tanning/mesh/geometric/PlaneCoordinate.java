@@ -29,7 +29,7 @@ public class PlaneCoordinate {
     }
 
     public boolean inTriangle() {
-        return 0 <= u && u <= 1 && 0 <= v && v <= 1;
+        return 0 <= u && 0 <= v && u + v <= 1;
     }
 
     public Coordinate toCoordinate() {
