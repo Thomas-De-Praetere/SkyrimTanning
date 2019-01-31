@@ -72,6 +72,10 @@ public class Mesh {
         return triangles;
     }
 
+    public List<Triangle> getTriangles(Node node) {
+        return nodeToTriangle.get(node);
+    }
+
     public List<Node> getNodes() {
         return nodes;
     }

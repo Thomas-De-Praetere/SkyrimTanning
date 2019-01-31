@@ -41,6 +41,11 @@ public class Tuple implements NumberLike<Tuple> {
         return new Tuple(u / t, v / t);
     }
 
+
+    public Tuple perp() {
+        return new Tuple(-v, u);
+    }
+
     @Override
     public String toString() {
         return "[" +

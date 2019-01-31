@@ -4,10 +4,9 @@ import com.google.common.collect.ListMultimap;
 import com.thomas.skyrim.tanning.mesh.data.Node;
 import com.thomas.skyrim.tanning.mesh.data.Tuple;
 import com.thomas.skyrim.tanning.mesh.geometric.GeometricLine2D;
+import com.thomas.skyrim.tanning.mesh.geometric.LineCoordinate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class PixelTransformer {
 
@@ -16,23 +15,10 @@ public class PixelTransformer {
 
     private boolean initialised;
 
-    private Tuple center;
-    private Tuple A;
-    private Tuple B;
-    private Tuple C;
+    private Map<GeometricLine2D, Double> outerLineToCover;
+    private Map<GeometricLine2D, Double> innerLineToCover;
 
-    private GeometricLine2D a;
-    private GeometricLine2D b;
-    private GeometricLine2D c;
-
-    private float g;
-    private float ga;
-    private float gb;
-    private float gc;
-
-    private float da;
-    private float db;
-    private float dc;
+    private double centerValue;
 
     public PixelTransformer(ListMultimap<CoveredTriangle, CoveredTriangle> neighbours, CoveredTriangle triangle) {
         this.neighbours = neighbours;
@@ -41,56 +27,89 @@ public class PixelTransformer {
     }
 
     public void intialize(int size) {
-        A = triangle.getTriangle().getN1().getUv().times(size);
-        B = triangle.getTriangle().getN2().getUv().times(size);
-        C = triangle.getTriangle().getN3().getUv().times(size);
+        Tuple A = triangle.getTriangle().getN1().getUv().times(size);
+        Tuple B = triangle.getTriangle().getN2().getUv().times(size);
+        Tuple C = triangle.getTriangle().getN3().getUv().times(size);
 
-        center = (A.add(B).add(C)).divide(3.0);
+        Tuple center = (A.add(B).add(C)).divide(3.0);
 
-        a = new GeometricLine2D(B, C);
-        b = new GeometricLine2D(C, A);
-        c = new GeometricLine2D(A, B);
+        GeometricLine2D a = new GeometricLine2D(B, C);
+        GeometricLine2D b = new GeometricLine2D(C, A);
+        GeometricLine2D c = new GeometricLine2D(A, B);
 
-        da = (float) a.distance(center);
-        db = (float) b.distance(center);
-        dc = (float) c.distance(center);
+        GeometricLine2D ad = new GeometricLine2D(A, center);
+        GeometricLine2D bd = new GeometricLine2D(B, center);
+        GeometricLine2D cd = new GeometricLine2D(C, center);
 
-        g = triangle.getCovered();
-        ga = getNeighbourValue(triangle.getTriangle().getN2(), triangle.getTriangle().getN3(), neighbours.get(triangle)).orElse(g);
-        gb = getNeighbourValue(triangle.getTriangle().getN3(), triangle.getTriangle().getN1(), neighbours.get(triangle)).orElse(g);
-        gc = getNeighbourValue(triangle.getTriangle().getN1(), triangle.getTriangle().getN2(), neighbours.get(triangle)).orElse(g);
+        double g = triangle.getCovered();
+        Optional<Double> n2N3Neighbour = getNeighbourValue(g, triangle.getTriangle().getN2(), triangle.getTriangle().getN3(), neighbours.get(triangle));
+        Optional<Double> n3N1Neighbour = getNeighbourValue(g, triangle.getTriangle().getN3(), triangle.getTriangle().getN1(), neighbours.get(triangle));
+        Optional<Double> n1N2Neighbour = getNeighbourValue(g, triangle.getTriangle().getN1(), triangle.getTriangle().getN2(), neighbours.get(triangle));
+        double ga = n2N3Neighbour.orElse(g);
+        double gb = n3N1Neighbour.orElse(g);
+        double gc = n1N2Neighbour.orElse(g);
+
+        centerValue = (ga + gb + gc) / 3.0;
+
+        outerLineToCover = new HashMap<>();
+        outerLineToCover.put(a, ga);
+        outerLineToCover.put(b, gb);
+        outerLineToCover.put(c, gc);
+
+        innerLineToCover = new HashMap<>();
+        innerLineToCover.put(ad, (gb + gc) / 2);
+        innerLineToCover.put(bd, (ga + gc) / 2);
+        innerLineToCover.put(cd, (ga + gb) / 2);
 
         initialised = true;
     }
 
-    private Optional<Float> getNeighbourValue(Node n2, Node n3, List<CoveredTriangle> coveredTriangles) {
-        return coveredTriangles.stream()
-                .filter(coveredTriangle -> coveredTriangle.getTriangle().getNodes().containsAll(Arrays.asList(n2, n3)))
+    private Optional<Double> getNeighbourValue(double g, Node n2, Node n3, List<CoveredTriangle> neighbours) {
+        return neighbours.stream()
+                .filter(coveredTriangle -> containsNodes(n2, n3, coveredTriangle))
                 .map(CoveredTriangle::getCovered)
                 .map(g1 -> (g1 + g) / 2)
                 .findFirst();
     }
 
-    public float getCoveredValue(Tuple location) {
-        if (!initialised) throw new IllegalStateException("not initialised");
-        float trueGA = getG(location, a, da, ga);
-        float trueGB = getG(location, b, db, gb);
-        float trueGC = getG(location, c, dc, gc);
-        return (trueGA + trueGB + trueGC) / 3;
+    private boolean containsNodes(Node n2, Node n3, CoveredTriangle coveredTriangle) {
+        Set<Node> nodes = coveredTriangle.getTriangle().getNodes();
+        return nodes.contains(n2) && nodes.contains(n3);
     }
 
-    private float getG(Tuple location, GeometricLine2D lineToUse, float distToUse, float coverToUse) {
-        float distance = (float) lineToUse.distance(location);
+    public double getCoveredValue(Tuple location) {
+        if (!initialised) throw new IllegalStateException("not initialised");
+        GeometricLine2D nearestInner = getNearest(innerLineToCover.keySet(), location);
+        GeometricLine2D nearestOuter = getNearest(outerLineToCover.keySet(), location);
+        double distToInner = nearestInner.distance(location);
+        double distToOuter = nearestOuter.distance(location);
+        double total = distToInner + distToOuter;
+        double lambda = distToInner / total;
+        return (1.0 - lambda * lambda) * innerLineValue(nearestInner, location)
+                + lambda * lambda * outerLineToCover.get(nearestOuter);
+    }
 
-        float max = Math.max(coverToUse, g);
-        float min = Math.min(coverToUse, g);
+    private double innerLineValue(GeometricLine2D nearestInner, Tuple location) {
+        LineCoordinate<GeometricLine2D> project = nearestInner.project(location);
+        double lambda = project.getLambda();
+        return lambda * lambda * centerValue + (1.0 - lambda * lambda) * innerLineToCover.get(nearestInner);
+    }
 
-        float result = g * (distance / distToUse) + coverToUse * (1 - distance / distToUse);
-
-        return Math.min(max, Math.max(min, result));
+    private GeometricLine2D getNearest(Set<GeometricLine2D> lines, Tuple location) {
+        GeometricLine2D closest = lines.stream().findAny().orElseThrow(IllegalStateException::new);
+        double dist = Double.POSITIVE_INFINITY;
+        for (GeometricLine2D line : lines) {
+            double distance = line.distance(location);
+            if (dist > distance) {
+                dist = distance;
+                closest = line;
+            }
+        }
+        return closest;
     }
 
     public CoveredTriangle getTriangle() {
         return triangle;
     }
+
 }

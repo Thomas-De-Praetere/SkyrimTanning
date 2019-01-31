@@ -2,6 +2,7 @@ package com.thomas.skyrim.tanning.mesh.geometric;
 
 import com.thomas.skyrim.tanning.mesh.data.Coordinate;
 import com.thomas.skyrim.tanning.mesh.data.Tuple;
+import com.thomas.skyrim.tanning.util.Solver;
 
 public class GeometricLine2D {
     protected final Tuple p1;
@@ -33,9 +34,29 @@ public class GeometricLine2D {
         double distP1P2 = Math.sqrt(vDist * vDist + uDist * uDist);
 
         double topPart = Math.abs(
-                (p2.v() - p1.v()) * t.u() - (p2.u() - p1.u()) * t.v() + p2.u() * p1.v() - p2.v() * p1.u()
+                (vDist) * t.u() - (uDist) * t.v() + p2.u() * p1.v() - p2.v() * p1.u()
         );
         return topPart / distP1P2;
+    }
+
+    public LineCoordinate<GeometricLine2D> project(Tuple t) {
+        Tuple perp = p2.subtract(p1).perp();
+        GeometricLine2D projectionLine = new GeometricLine2D(t, t.add(perp));
+
+        //This line is P = P1+p(P2-P1) and the projection line is Q = Q1+q(Q2-Q1)
+        //Equality results in (minus was brought in the second) q(Q2-Q1)+p(P1-P2)=P1-Q1
+
+        Tuple Q2Q1 = projectionLine.p2.subtract(projectionLine.p1);
+        Tuple P1P2 = p1.subtract(p2);
+        Tuple P1Q1 = p1.subtract(projectionLine.p1);
+
+        Solver solver = new Solver(3,
+                Q2Q1.u(), P1P2.u(), P1Q1.u(),
+                Q2Q1.v(), P1P2.v(), P1Q1.v()
+        );
+        double[][] reduce = solver.reduce();
+        double p = reduce[1][2];
+        return new LineCoordinate<>(p, this);
     }
 
     @Override

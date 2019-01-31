@@ -48,7 +48,7 @@ public class CoveredChecker {
         for (Triangle meshTri : mesh.getTriangles()) {
             GeometricTriangle triangle = GeometricTriangle.of(meshTri);
 
-            Pair<TriangleCoordinate, LineCoordinate> pair = triangle.edgeIntersection(ray);
+            Pair<TriangleCoordinate, LineCoordinate<GeometricLine>> pair = triangle.edgeIntersection(ray);
             //intersection with covering triangle is in the direction of the ray and on the triangle
             if (pair.getFirst().inTriangle() && pair.getSecond().hasPositiveDirection()) {
                 return true;

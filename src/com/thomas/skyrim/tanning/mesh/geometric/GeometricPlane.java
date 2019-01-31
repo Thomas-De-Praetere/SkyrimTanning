@@ -50,7 +50,7 @@ public class GeometricPlane {
         ).getFirst();
     }
 
-    public Pair<? extends PlaneCoordinate, LineCoordinate> edgeIntersection(GeometricLine line) {
+    public Pair<? extends PlaneCoordinate, LineCoordinate<GeometricLine>> edgeIntersection(GeometricLine line) {
         Coordinate A = p1;
         Coordinate B = p2.subtract(p1);
         Coordinate C = p3.subtract(p1);
@@ -75,7 +75,7 @@ public class GeometricPlane {
 
         return Pair.of(
                 new PlaneCoordinate(u, v, this),
-                new LineCoordinate(l, line)
+                new LineCoordinate<>(l, line)
         );
     }
 

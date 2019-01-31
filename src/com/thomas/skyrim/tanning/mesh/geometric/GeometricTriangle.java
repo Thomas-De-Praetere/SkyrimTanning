@@ -38,8 +38,8 @@ public class GeometricTriangle extends GeometricPlane {
     }
 
     @Override
-    public Pair<TriangleCoordinate, LineCoordinate> edgeIntersection(GeometricLine line) {
-        Pair<? extends PlaneCoordinate, LineCoordinate> pair = super.edgeIntersection(line);
+    public Pair<TriangleCoordinate, LineCoordinate<GeometricLine>> edgeIntersection(GeometricLine line) {
+        Pair<? extends PlaneCoordinate, LineCoordinate<GeometricLine>> pair = super.edgeIntersection(line);
         return Pair.of(TriangleCoordinate.of(pair.getFirst(), this), pair.getSecond());
     }
 }

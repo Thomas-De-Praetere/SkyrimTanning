@@ -39,8 +39,10 @@ public class CoveredTriangleWriter {
             triangle.intialize(imageSize);
             Set<Pair<Integer, Integer>> coveredPixels = getCoverePixels(triangle, imageSize);
             for (Pair<Integer, Integer> coveredPixel : coveredPixels) {
-                float coveredValue = triangle.getCoveredValue(new Tuple(coveredPixel.getFirst() + 0.5, coveredPixel.getSecond() + 0.5));
-
+                float coveredValue = (float) triangle.getCoveredValue(new Tuple(
+                        coveredPixel.getFirst() + 0.5,
+                        coveredPixel.getSecond() + 0.5)
+                );
                 image.setRGB(
                         coveredPixel.getFirst(),
                         coveredPixel.getSecond(),
@@ -48,9 +50,14 @@ public class CoveredTriangleWriter {
                 );
             }
         }
-        BufferedImage result1 = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
-        BufferedImageOp blur = new ConvolveOp(getBlurKernel(1));
-        blur.filter(image, result1);
+        BufferedImage result1 = image;
+        BufferedImage prev = image;
+        for (int i = 0; i < 10; i++) {
+            result1 = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
+            BufferedImageOp blur = new ConvolveOp(getBlurKernel(3));
+            blur.filter(prev, result1);
+            prev = result1;
+        }
 
         ImageIO.write(
                 result1,
@@ -109,8 +116,9 @@ public class CoveredTriangleWriter {
         int dataItems = width * height;
         float[] data = new float[dataItems];
         for (int i = 0; i < dataItems; i++) {
-            data[i] = 1.0f / (float) dataItems;
+            data[i] = 1.0f / (float) (dataItems - 1);
         }
+        data[dataItems / 2+1] = 0.0f;
         return new Kernel(
                 width,
                 height,

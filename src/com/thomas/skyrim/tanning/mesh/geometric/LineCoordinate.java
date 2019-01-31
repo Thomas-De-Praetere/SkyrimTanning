@@ -5,11 +5,11 @@ import com.thomas.skyrim.tanning.mesh.data.Coordinate;
 /**
  * This class was created by thoma on 09-May-18.
  */
-public class LineCoordinate {
+public class LineCoordinate<T> {
     private final double lambda;
-    private final GeometricLine line;
+    private final T line;
 
-    public LineCoordinate(double lambda, GeometricLine line) {
+    public LineCoordinate(double lambda, T line) {
         this.lambda = lambda;
         this.line = line;
     }
@@ -26,11 +26,8 @@ public class LineCoordinate {
         return 0 <= lambda;
     }
 
-    public GeometricLine getLine() {
+    public T getLine() {
         return line;
     }
 
-    public Coordinate toCoordinate() {
-        return line.getP1().times(1 - lambda).add(line.getP2().times(lambda));
-    }
 }

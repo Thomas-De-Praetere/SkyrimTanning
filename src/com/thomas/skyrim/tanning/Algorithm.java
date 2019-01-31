@@ -8,8 +8,8 @@ import com.thomas.skyrim.tanning.algorithm.CoveredChecker;
 import com.thomas.skyrim.tanning.algorithm.CoveredTriangle;
 import com.thomas.skyrim.tanning.algorithm.PixelTransformer;
 import com.thomas.skyrim.tanning.algorithm.writer.CoveredTriangleWriter;
-import com.thomas.skyrim.tanning.mesh.data.Edge;
 import com.thomas.skyrim.tanning.mesh.data.Mesh;
+import com.thomas.skyrim.tanning.mesh.data.Node;
 import com.thomas.skyrim.tanning.mesh.data.Triangle;
 import com.thomas.skyrim.tanning.mesh.load.Loader;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * This class was created by thoma on 01-May-18.
  */
 public class Algorithm {
-    public static final int TIMES = 10;
+    public static final int TIMES = 20;
 
     private final String baseBodyLocation;
     private final String outputLocation;
@@ -55,7 +55,7 @@ public class Algorithm {
 
         for (Triangle triangle : base.getTriangles()) {
             double covered = checker.isCovered(triangle);
-            processedTriangles.add(new CoveredTriangle(triangle, (float) covered));
+            processedTriangles.add(new CoveredTriangle(triangle, covered));
         }
 
         SetMultimap<Triangle, Triangle> triToNeighbours = createNeighbourMap(base);
@@ -94,9 +94,9 @@ public class Algorithm {
         SetMultimap<Triangle, Triangle> triToNeighbours = HashMultimap.create();
 
         for (Triangle triangle : base.getTriangles()) {
-            if (triToNeighbours.get(triangle).size() >= 3) continue;
-            for (Edge edge : base.getTriangleEdges(triangle)) {
-                List<Triangle> triangles = base.getTriangles(edge);
+            // if (triToNeighbours.get(triangle).size() >= 3) continue;
+            for (Node node : triangle.getNodes()) {
+                List<Triangle> triangles = base.getTriangles(node);
                 for (Triangle neighbour : triangles) {
                     if (neighbour.equals(triangle)) continue;
                     triToNeighbours.put(triangle, neighbour);
@@ -125,9 +125,9 @@ public class Algorithm {
                     .stream()
                     .map(triToCovered::get)
                     .collect(Collectors.toList());
-            float newCoverValue = 0.0F;
+            double newCoverValue = 0.0;
 
-            float factor = 1.0f / (float) (neighbours.size() + 1);
+            double factor = 1.0 / (double) (neighbours.size() + 1);
             newCoverValue += processedTriangle.getCovered() * factor;
             for (CoveredTriangle neighbour : neighbours) {
                 newCoverValue += neighbour.getCovered() * factor;
