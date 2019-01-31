@@ -29,3 +29,8 @@ This is a very rough algorithm and the pure version will take a long time. But a
 We assume locality. We assume that pixels next to eachother are mapped on triangles near each other. That way if we find a triangle that crosses a trace edge, we know that triangles near that triangle could be crossing other trace edges of the same pixel and pixels nearby. Therefore we can use a breadth first search on the neighbours of the first triangle we cross. That way we will still check all triangles, but if it crosses one, we will find it faster because it is looked at earlier.
 
 Another thing we can do is work with bounding boxes. If the trace does not intersect with the bounding box, it is not covered by the surrounding mesh.
+
+## Current idea
+Now we have made it simpler. Per triangle in the base mesh, we generate some rays and set the covering to the amount of rays that intersect with a triangle of the outer mesh. This is faster than any optimisation I have tried, which is sad but okay, simple is better.
+Now, we have also implemented blurring. To equalise the coverdata over the entire mesh, we blur a triangle according to its neighbours triangles. This has proven to be a fast and reliable way to normalise the values.
+Now we want to grade the pixel values in a triangle. I decided to make each pixel on an edge the mean cover value of both triangles on that edge. then the shade of each pixel is defined by the distance of that pixel to the edges of the triangle. This should give descent results but has proven a pain in the ass to implement.
